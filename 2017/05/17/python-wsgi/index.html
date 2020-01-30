@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Python WSGI | Mengyy&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="PythonWSGI">
+  
+  
+  
+  
+  <meta name="description" content="WSGI(Web Server Gateway Interface) Web服务网关接口。 WSGI的目的替代CGI。CGI进程（类似Python解释器）针对每个请求进行创建，完成请求后退出。如果应程序接收树钱个请求，创建大量的语言解释器进程就会很快导致服务器宕机。 其目标在Web服务器与Web框架层之间提供一个通用的API标准，减少之间互操作性，并形成统一的调用方式。 WSGI 应用根据WSGI">
+<meta name="keywords" content="Python,WSGI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python WSGI">
+<meta property="og:url" content="http://mengyangyang.org/2017/05/17/python-wsgi/index.html">
+<meta property="og:site_name" content="Mengyy&#39;s Blog">
+<meta property="og:description" content="WSGI(Web Server Gateway Interface) Web服务网关接口。 WSGI的目的替代CGI。CGI进程（类似Python解释器）针对每个请求进行创建，完成请求后退出。如果应程序接收树钱个请求，创建大量的语言解释器进程就会很快导致服务器宕机。 其目标在Web服务器与Web框架层之间提供一个通用的API标准，减少之间互操作性，并形成统一的调用方式。 WSGI 应用根据WSGI">
+<meta property="og:locale" content="en_US.UTF-8">
+<meta property="og:updated_time" content="2020-01-30T11:36:23.885Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python WSGI">
+<meta name="twitter:description" content="WSGI(Web Server Gateway Interface) Web服务网关接口。 WSGI的目的替代CGI。CGI进程（类似Python解释器）针对每个请求进行创建，完成请求后退出。如果应程序接收树钱个请求，创建大量的语言解释器进程就会很快导致服务器宕机。 其目标在Web服务器与Web框架层之间提供一个通用的API标准，减少之间互操作性，并形成统一的调用方式。 WSGI 应用根据WSGI">
+  
+    <link rel="alternate" href="/atom.xml" title="Mengyy&#39;s Blog" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="/js/jquery-3.1.1.min.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/fashion.css">
+  <link rel="stylesheet" href="/css/glyphs.css">
+
+</head>
+</html>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  
+  <div class="site-header-image">
+    <img id="originBg" width="100%" alt="Hike News" src="">
+  </div>
+
+  <div id="header-blur" class="site-header-image blur" style="position: absolute; top:0; height: 207px; min-height: 207px; min-width: 100%;">
+    <img id="blurBg" width="100%" style="top: 96%" alt="Hike News" src="">
+  </div>
+
+  <script>
+        var imgUrls = "css/images/pose01.jpg,https://source.unsplash.com/collection/954550/1920x1080,https://source.unsplash.com/collection/954550/1920x1081".split(",");
+        var random = Math.floor((Math.random() * imgUrls.length ));
+        if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+          document.getElementById("originBg").src=imgUrls[random];
+          document.getElementById("blurBg").src=imgUrls[random];
+        } else {
+          document.getElementById("originBg").src='/' + imgUrls[random];
+          document.getElementById("blurBg").src='/' + imgUrls[random];
+        }
+    </script>
+
+
+
+
+<header id="allheader" class="site-header" role="banner" 
+   style="width: 100%; position: absolute; top:0; background: rgba(255,255,255,.8);"  >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" title="Mengyy&#39;s Blog" rel="home"> Mengyy&#39;s Blog </a>
+            
+          </h1>
+          
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-python-wsgi" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Python WSGI
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2017/05/17/python-wsgi/" class="article-date">
+	  <time datetime="2017-05-17T14:17:37.000Z" itemprop="datePublished">May 17, 2017</time>
+	</a>
+
+       
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>WSGI(Web Server Gateway Interface) Web服务网关接口。</p>
+<p>WSGI的目的替代CGI。CGI进程（类似Python解释器）针对每个请求进行创建，完成请求后退出。如果应程序接收树钱个请求，创建大量的语言解释器进程就会很快导致服务器宕机。</p>
+<p><strong>其目标在Web服务器与Web框架层之间提供一个通用的API标准，减少之间互操作性，并形成统一的调用方式。</strong></p>
+<h2 id="WSGI-应用"><a href="#WSGI-应用" class="headerlink" title="WSGI 应用"></a>WSGI 应用</h2><p>根据WSGI的定义，其应用是可调用的对象，其参数固定为两个：</p>
+<ul>
+<li>含有服务器环境变量的字典</li>
+<li>可调用的对象， 该对象使用HTTP状态码和会返回客户端的HTTP头来初始化响应</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">simple_wsgi_app</span><span class="params">(environment, start_response)</span>:</span></span><br><span class="line">    status = <span class="string">'200 OK'</span></span><br><span class="line">    headers = [<span class="string">'Content-Type'</span>: <span class="string">'text/plain'</span>]</span><br><span class="line">    start_response(status, headers)</span><br><span class="line">    <span class="keyword">return</span> [<span class="string">'Hello world!'</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>environment</strong> 包含一些环境变量，如HTTP_HOST, HTTP_USER, HTTP_AGENT, SERVER_PROTOCOL等。‘</p>
+<p><strong>start_response()</strong>是一个可调用的对象，必须在应用执行，生成最终发送回客户端的响应</p>
+<p>werkzeug中start_response定义：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">start_response</span><span class="params">(status, response_headers, exc_info=None)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> exc_info:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> headers_sent:</span><br><span class="line">                reraise(*exc_info)</span><br><span class="line">        <span class="keyword">finally</span>:</span><br><span class="line">            exc_info = <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">elif</span> headers_set:</span><br><span class="line">        <span class="keyword">raise</span> AssertionError(<span class="string">'Headers already set'</span>)</span><br><span class="line">    headers_set[:] = [status, response_headers]</span><br><span class="line">    <span class="keyword">return</span> write</span><br></pre></td></tr></table></figure>
+<h2 id="WSGI服务器"><a href="#WSGI服务器" class="headerlink" title="WSGI服务器"></a>WSGI服务器</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> StringIO</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_wsgi_app</span><span class="params">(app, environment)</span>:</span></span><br><span class="line">    body = StringIO.StringIO()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start_response</span><span class="params">(status, headers)</span>:</span></span><br><span class="line">        body.write(<span class="string">'Status: %s\r\n'</span> % status)</span><br><span class="line">        <span class="keyword">for</span> header <span class="keyword">in</span> headers:</span><br><span class="line">            body.write(<span class="string">'%s: %s\r\n'</span> % header)</span><br><span class="line">        <span class="keyword">return</span> body.write</span><br><span class="line"></span><br><span class="line">    iterable = app(environment, start_response)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        body.write(<span class="string">'\r\n%s\r\n'</span> % <span class="string">'\r\n'</span>.join(line <span class="keyword">for</span> line <span class="keyword">in</span> iterable))</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        <span class="keyword">if</span> hasattr(iterable, <span class="string">'close'</span>) <span class="keyword">and</span> callable(iterable.close):</span><br><span class="line">            iterable.close()</span><br></pre></td></tr></table></figure>
+<h2 id="Flask-WSGI-应用和服务实现"><a href="#Flask-WSGI-应用和服务实现" class="headerlink" title="Flask WSGI 应用和服务实现"></a>Flask WSGI 应用和服务实现</h2><p><strong>flask WSGI app</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Flask:wsgi_app</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">wsgi_app</span><span class="params">(self, environ, start_response)</span>:</span></span><br><span class="line">    <span class="string">"""The actual WSGI application.  This is not implemented in</span></span><br><span class="line"><span class="string">    `__call__` so that middlewares can be applied without losing a</span></span><br><span class="line"><span class="string">    reference to the class.  So instead of doing this::</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        app = MyMiddleware(app)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    It's a better idea to do this instead::</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        app.wsgi_app = MyMiddleware(app.wsgi_app)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Then you still have the original application object around and</span></span><br><span class="line"><span class="string">    can continue to call methods on it.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    .. versionchanged:: 0.7</span></span><br><span class="line"><span class="string">       The behavior of the before and after request callbacks was changed</span></span><br><span class="line"><span class="string">       under error conditions and a new callback was added that will</span></span><br><span class="line"><span class="string">       always execute at the end of the request, independent on if an</span></span><br><span class="line"><span class="string">       error occurred or not.  See :ref:`callbacks-and-errors`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    :param environ: a WSGI environment</span></span><br><span class="line"><span class="string">    :param start_response: a callable accepting a status code,</span></span><br><span class="line"><span class="string">                           a list of headers and an optional</span></span><br><span class="line"><span class="string">                           exception context to start the response</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    ctx = self.request_context(environ)</span><br><span class="line">    ctx.push()</span><br><span class="line">    error = <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            response = self.full_dispatch_request()</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            error = e</span><br><span class="line">            response = self.handle_exception(e)</span><br><span class="line">        <span class="keyword">return</span> response(environ, start_response)</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        <span class="keyword">if</span> self.should_ignore_error(error):</span><br><span class="line">            error = <span class="keyword">None</span></span><br><span class="line">        ctx.auto_pop(error)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Flask:__call__</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, environ, start_response)</span>:</span></span><br><span class="line">    <span class="string">"""Shortcut for :attr:`wsgi_app`."""</span></span><br><span class="line">    <span class="keyword">return</span> self.wsgi_app(environ, start_response)</span><br><span class="line"></span><br><span class="line"><span class="comment"># BaseResponse:__call__</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, environ, start_response)</span>:</span></span><br><span class="line">    <span class="string">"""Process this response as WSGI application.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    :param environ: the WSGI environment.</span></span><br><span class="line"><span class="string">    :param start_response: the response callable provided by the WSGI</span></span><br><span class="line"><span class="string">                           server.</span></span><br><span class="line"><span class="string">    :return: an application iterator</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    app_iter, status, headers = self.get_wsgi_response(environ)</span><br><span class="line">    start_response(status, headers)</span><br><span class="line">    <span class="keyword">return</span> app_iter</span><br></pre></td></tr></table></figure>
+<p><strong>flask WSGI Server</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_wsgi</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> self.headers.get(<span class="string">'Expect'</span>, <span class="string">''</span>).lower().strip() == <span class="string">'100-continue'</span>:</span><br><span class="line">        self.wfile.write(<span class="string">b'HTTP/1.1 100 Continue\r\n\r\n'</span>)</span><br><span class="line"></span><br><span class="line">    self.environ = environ = self.make_environ()</span><br><span class="line">    headers_set = []</span><br><span class="line">    headers_sent = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">write</span><span class="params">(data)</span>:</span></span><br><span class="line">        <span class="keyword">assert</span> headers_set, <span class="string">'write() before start_response'</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> headers_sent:</span><br><span class="line">            status, response_headers = headers_sent[:] = headers_set</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                code, msg = status.split(<span class="keyword">None</span>, <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">except</span> ValueError:</span><br><span class="line">                code, msg = status, <span class="string">""</span></span><br><span class="line">            self.send_response(int(code), msg)</span><br><span class="line">            header_keys = set()</span><br><span class="line">            <span class="keyword">for</span> key, value <span class="keyword">in</span> response_headers:</span><br><span class="line">                self.send_header(key, value)</span><br><span class="line">                key = key.lower()</span><br><span class="line">                header_keys.add(key)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">'content-length'</span> <span class="keyword">not</span> <span class="keyword">in</span> header_keys:</span><br><span class="line">                self.close_connection = <span class="keyword">True</span></span><br><span class="line">                self.send_header(<span class="string">'Connection'</span>, <span class="string">'close'</span>)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">'server'</span> <span class="keyword">not</span> <span class="keyword">in</span> header_keys:</span><br><span class="line">                self.send_header(<span class="string">'Server'</span>, self.version_string())</span><br><span class="line">            <span class="keyword">if</span> <span class="string">'date'</span> <span class="keyword">not</span> <span class="keyword">in</span> header_keys:</span><br><span class="line">                self.send_header(<span class="string">'Date'</span>, self.date_time_string())</span><br><span class="line">            self.end_headers()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">assert</span> isinstance(data, bytes), <span class="string">'applications must write bytes'</span></span><br><span class="line">        self.wfile.write(data)</span><br><span class="line">        self.wfile.flush()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start_response</span><span class="params">(status, response_headers, exc_info=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> exc_info:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span> headers_sent:</span><br><span class="line">                    reraise(*exc_info)</span><br><span class="line">            <span class="keyword">finally</span>:</span><br><span class="line">                exc_info = <span class="keyword">None</span></span><br><span class="line">        <span class="keyword">elif</span> headers_set:</span><br><span class="line">            <span class="keyword">raise</span> AssertionError(<span class="string">'Headers already set'</span>)</span><br><span class="line">        headers_set[:] = [status, response_headers]</span><br><span class="line">        <span class="keyword">return</span> write</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(app)</span>:</span></span><br><span class="line">        application_iter = app(environ, start_response)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">for</span> data <span class="keyword">in</span> application_iter:</span><br><span class="line">                write(data)</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> headers_sent:</span><br><span class="line">                write(<span class="string">b''</span>)</span><br><span class="line">        <span class="keyword">finally</span>:</span><br><span class="line">            <span class="keyword">if</span> hasattr(application_iter, <span class="string">'close'</span>):</span><br><span class="line">                application_iter.close()</span><br><span class="line">            application_iter = <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        execute(self.server.app)</span><br><span class="line">    <span class="keyword">except</span> (socket.error, socket.timeout) <span class="keyword">as</span> e:</span><br><span class="line">        self.connection_dropped(e, environ)</span><br><span class="line">    <span class="keyword">except</span> Exception:</span><br><span class="line">        <span class="keyword">if</span> self.server.passthrough_errors:</span><br><span class="line">            <span class="keyword">raise</span></span><br><span class="line">        <span class="keyword">from</span> werkzeug.debug.tbtools <span class="keyword">import</span> get_current_traceback</span><br><span class="line">        traceback = get_current_traceback(ignore_system_exceptions=<span class="keyword">True</span>)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="comment"># if we haven't yet sent the headers but they are set</span></span><br><span class="line">            <span class="comment"># we roll back to be able to set them again.</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> headers_sent:</span><br><span class="line">                <span class="keyword">del</span> headers_set[:]</span><br><span class="line">            execute(InternalServerError())</span><br><span class="line">        <span class="keyword">except</span> Exception:</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line">        self.server.log(<span class="string">'error'</span>, <span class="string">'Error on request:\n%s'</span>,</span><br><span class="line">                        traceback.plaintext)</span><br></pre></td></tr></table></figure>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li>《Python核心编程》</li>
+<li><a href="https://docs.python.org/2/howto/webservers.html#step-back-wsgi" target="_blank" rel="noopener">https://docs.python.org/2/howto/webservers.html#step-back-wsgi</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WSGI/">WSGI</a></li></ul>
+
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/05/17/django-database-router/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Django数据库路由
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/05/14/flask-signal/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Flask信号</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#WSGI-应用"><span class="nav-number">1.</span> <span class="nav-text">WSGI 应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WSGI服务器"><span class="nav-number">2.</span> <span class="nav-text">WSGI服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flask-WSGI-应用和服务实现"><span class="nav-number">3.</span> <span class="nav-text">Flask WSGI 应用和服务实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2020 Mengyy&#39;s Blog All Rights Reserved.
+        
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+      var headerblur = document.getElementById("header-blur");
+      headerblur.style.minHeight = window.getComputedStyle(document.getElementById("allheader"), null).height;
+    
+    
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Django异常处理 | Mengyy&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="PythonDjango">
+  
+  
+  
+  
+  <meta name="description" content="基于django技术栈实现的WEB应用，生产环境中都会关闭DEBUG选项，Django默认只会输出很少的错误信息，不利于开发人员快速定位、解决问题。为了解决此问题，考虑定制Django默认的错误处理，还原错误现场，配合错误日志、邮件报警快速发现、解决BUG。  本文档不包含错误日志、邮件报警等内容  Django异常内容调用栈帧WSGI处理函数django.core.handlers.base.p">
+<meta name="keywords" content="Python,Django">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Django异常处理">
+<meta property="og:url" content="http://mengyangyang.org/2017/12/06/django-exception/index.html">
+<meta property="og:site_name" content="Mengyy&#39;s Blog">
+<meta property="og:description" content="基于django技术栈实现的WEB应用，生产环境中都会关闭DEBUG选项，Django默认只会输出很少的错误信息，不利于开发人员快速定位、解决问题。为了解决此问题，考虑定制Django默认的错误处理，还原错误现场，配合错误日志、邮件报警快速发现、解决BUG。  本文档不包含错误日志、邮件报警等内容  Django异常内容调用栈帧WSGI处理函数django.core.handlers.base.p">
+<meta property="og:locale" content="en_US.UTF-8">
+<meta property="og:updated_time" content="2020-01-30T11:36:23.881Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Django异常处理">
+<meta name="twitter:description" content="基于django技术栈实现的WEB应用，生产环境中都会关闭DEBUG选项，Django默认只会输出很少的错误信息，不利于开发人员快速定位、解决问题。为了解决此问题，考虑定制Django默认的错误处理，还原错误现场，配合错误日志、邮件报警快速发现、解决BUG。  本文档不包含错误日志、邮件报警等内容  Django异常内容调用栈帧WSGI处理函数django.core.handlers.base.p">
+  
+    <link rel="alternate" href="/atom.xml" title="Mengyy&#39;s Blog" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="/js/jquery-3.1.1.min.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/fashion.css">
+  <link rel="stylesheet" href="/css/glyphs.css">
+
+</head>
+</html>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  
+  <div class="site-header-image">
+    <img id="originBg" width="100%" alt="Hike News" src="">
+  </div>
+
+  <div id="header-blur" class="site-header-image blur" style="position: absolute; top:0; height: 207px; min-height: 207px; min-width: 100%;">
+    <img id="blurBg" width="100%" style="top: 96%" alt="Hike News" src="">
+  </div>
+
+  <script>
+        var imgUrls = "css/images/pose01.jpg,https://source.unsplash.com/collection/954550/1920x1080,https://source.unsplash.com/collection/954550/1920x1081".split(",");
+        var random = Math.floor((Math.random() * imgUrls.length ));
+        if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+          document.getElementById("originBg").src=imgUrls[random];
+          document.getElementById("blurBg").src=imgUrls[random];
+        } else {
+          document.getElementById("originBg").src='/' + imgUrls[random];
+          document.getElementById("blurBg").src='/' + imgUrls[random];
+        }
+    </script>
+
+
+
+
+<header id="allheader" class="site-header" role="banner" 
+   style="width: 100%; position: absolute; top:0; background: rgba(255,255,255,.8);"  >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" title="Mengyy&#39;s Blog" rel="home"> Mengyy&#39;s Blog </a>
+            
+          </h1>
+          
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-django-exception" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Django异常处理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2017/12/06/django-exception/" class="article-date">
+	  <time datetime="2017-12-06T08:41:04.000Z" itemprop="datePublished">December 6, 2017</time>
+	</a>
+
+       
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>基于django技术栈实现的WEB应用，生产环境中都会关闭DEBUG选项，Django默认只会输出很少的错误信息，不利于开发人员快速定位、解决问题。为了解决此问题，考虑定制Django默认的错误处理，还原错误现场，配合错误日志、邮件报警快速发现、解决BUG。</p>
+<blockquote>
+<p>本文档不包含错误日志、邮件报警等内容</p>
+</blockquote>
+<h2 id="Django异常内容调用栈帧"><a href="#Django异常内容调用栈帧" class="headerlink" title="Django异常内容调用栈帧"></a>Django异常内容调用栈帧</h2><h3 id="WSGI处理函数"><a href="#WSGI处理函数" class="headerlink" title="WSGI处理函数"></a>WSGI处理函数</h3><p><code>django.core.handlers.base.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseHandler</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="comment"># Changes that are always applied to a response (in this order).</span></span><br><span class="line">    ... ...</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_response</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        <span class="string">"Returns an HttpResponse object for the given HttpRequest"</span></span><br><span class="line">        <span class="comment"># Setup default url resolver for this thread, this code is outside</span></span><br><span class="line">        <span class="comment"># the try/except so we don't get a spurious "unbound local</span></span><br><span class="line">        <span class="comment"># variable" exception in the event an exception is raised before</span></span><br><span class="line">        <span class="comment"># resolver is set</span></span><br><span class="line">        <span class="comment"># 初始化路由解析器</span></span><br><span class="line">        urlconf = settings.ROOT_URLCONF</span><br><span class="line">        urlresolvers.set_urlconf(urlconf)</span><br><span class="line">        resolver = urlresolvers.RegexURLResolver(<span class="string">r'^/'</span>, urlconf)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            response = <span class="keyword">None</span></span><br><span class="line">            ... ...</span><br><span class="line">        <span class="keyword">except</span>:  <span class="comment"># Handle everything else.</span></span><br><span class="line">            <span class="comment"># Get the exception info now, in case another exception is thrown later.</span></span><br><span class="line">            signals.got_request_exception.send(sender=self.__class__, request=request)</span><br><span class="line">            <span class="comment"># 调用处理未捕获的异常方法</span></span><br><span class="line">            response = self.handle_uncaught_exception(request, resolver, sys.exc_info())</span><br><span class="line">       		... ...</span><br><span class="line">	<span class="comment"># 处理未捕获的异常</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">handle_uncaught_exception</span><span class="params">(self, request, resolver, exc_info)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        Processing for any otherwise uncaught exceptions (those that will</span></span><br><span class="line"><span class="string">        generate HTTP 500 responses). Can be overridden by subclasses who want</span></span><br><span class="line"><span class="string">        customised 500 handling.</span></span><br><span class="line"><span class="string">        Be *very* careful when overriding this because the error could be</span></span><br><span class="line"><span class="string">        caused by anything, so assuming something like the database is always</span></span><br><span class="line"><span class="string">        available would be an error.</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> settings.DEBUG_PROPAGATE_EXCEPTIONS:</span><br><span class="line">            <span class="keyword">raise</span></span><br><span class="line">        logger.error(<span class="string">'Internal Server Error: %s'</span>, request.path,</span><br><span class="line">            exc_info=exc_info,</span><br><span class="line">            extra=&#123;</span><br><span class="line">                <span class="string">'status_code'</span>: <span class="number">500</span>,</span><br><span class="line">                <span class="string">'request'</span>: request</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">if</span> settings.DEBUG:</span><br><span class="line">            <span class="keyword">return</span> debug.technical_500_response(request, *exc_info)</span><br><span class="line">        <span class="comment"># If Http500 handler is not installed, re-raise last exception</span></span><br><span class="line">        <span class="keyword">if</span> resolver.urlconf_module <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            six.reraise(*exc_info)</span><br><span class="line">        <span class="comment"># Return an HttpResponse that displays a friendly error message.</span></span><br><span class="line">        <span class="comment"># 查找注册的错误处理函数</span></span><br><span class="line">        callback, param_dict = resolver.resolve_error_handler(<span class="number">500</span>)</span><br><span class="line">        <span class="comment"># 调用错误处理函数</span></span><br><span class="line">        <span class="keyword">return</span> callback(request, **param_dict)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WSGIHandler</span><span class="params">(base.BaseHandler)</span>:</span></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, environ, start_response)</span>:</span></span><br><span class="line">    	... ...</span><br><span class="line">        response = self.get_response(request)</span><br></pre></td></tr></table></figure>
+<h3 id="URL路由解析"><a href="#URL路由解析" class="headerlink" title="URL路由解析"></a>URL路由解析</h3><p><code>django.core.urlresolvers.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RegexURLPattern</span><span class="params">(LocaleRegexProvider)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, regex, callback, default_args=None, name=None)</span>:</span></span><br><span class="line">        LocaleRegexProvider.__init__(self, regex)</span><br><span class="line">        <span class="comment"># callback is either a string like 'foo.views.news.stories.story_detail'</span></span><br><span class="line">        <span class="comment"># which represents the path to a module and a view function name, or a</span></span><br><span class="line">        <span class="comment"># callable object (view).</span></span><br><span class="line">        <span class="keyword">if</span> callable(callback):</span><br><span class="line">            self._callback = callback</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self._callback = <span class="keyword">None</span></span><br><span class="line">            self._callback_str = callback</span><br><span class="line">        self.default_args = default_args <span class="keyword">or</span> &#123;&#125;</span><br><span class="line">        self.name = name</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># 解析错误处理函数</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">resolve_error_handler</span><span class="params">(self, view_type)</span>:</span></span><br><span class="line">        callback = getattr(self.urlconf_module, <span class="string">'handler%s'</span> % view_type, <span class="keyword">None</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> callback:</span><br><span class="line">            <span class="comment"># No handler specified in file; use default</span></span><br><span class="line">            <span class="comment"># Lazy import, since django.urls imports this file</span></span><br><span class="line">            <span class="keyword">from</span> django.conf <span class="keyword">import</span> urls</span><br><span class="line">            callback = getattr(urls, <span class="string">'handler%s'</span> % view_type)</span><br><span class="line">        <span class="keyword">return</span> get_callable(callback), &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="注册Django默认错误处理函数"><a href="#注册Django默认错误处理函数" class="headerlink" title="注册Django默认错误处理函数"></a>注册Django默认错误处理函数</h3><p><code>django.confs.urls.__init__.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">handler400 = <span class="string">'django.views.defaults.bad_request'</span></span><br><span class="line">handler403 = <span class="string">'django.views.defaults.permission_denied'</span></span><br><span class="line">handler404 = <span class="string">'django.views.defaults.page_not_found'</span></span><br><span class="line">handler500 = <span class="string">'django.views.defaults.server_error'</span></span><br></pre></td></tr></table></figure>
+<h3 id="定义Django默认错误处理函数"><a href="#定义Django默认错误处理函数" class="headerlink" title="定义Django默认错误处理函数"></a>定义Django默认错误处理函数</h3><p><code>django.views.defaults.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@requires_csrf_token</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">server_error</span><span class="params">(request, template_name=<span class="string">'500.html'</span>)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    500 error handler.</span></span><br><span class="line"><span class="string">    Templates: :template:`500.html`</span></span><br><span class="line"><span class="string">    Context: None</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        template = loader.get_template(template_name)</span><br><span class="line">    <span class="keyword">except</span> TemplateDoesNotExist:</span><br><span class="line">        <span class="keyword">return</span> http.HttpResponseServerError(<span class="string">'&lt;h1&gt;Server Error (500)&lt;/h1&gt;'</span>, content_type=<span class="string">'text/html'</span>)</span><br><span class="line">    <span class="keyword">return</span> http.HttpResponseServerError(template.render())</span><br></pre></td></tr></table></figure>
+<h2 id="定制Django500异常处理"><a href="#定制Django500异常处理" class="headerlink" title="定制Django500异常处理"></a>定制Django500异常处理</h2><h3 id="定制WSGIHandler"><a href="#定制WSGIHandler" class="headerlink" title="定制WSGIHandler"></a>定制<code>WSGIHandler</code></h3><p><code>project/wsgi.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomWSGIHandler</span><span class="params">(WSGIHandler)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    定制WSGIHandler</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_uncaught_exception</span><span class="params">(self, request, resolver, exc_info)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        重载夫类异常处理函数</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        _logger = logging.getLogger(<span class="string">'app.wsgi'</span>)</span><br><span class="line">        <span class="keyword">if</span> settings.DEBUG_PROPAGATE_EXCEPTIONS:</span><br><span class="line">            <span class="keyword">raise</span></span><br><span class="line">        _logger.error(<span class="string">'Internal Server Error: %s'</span>, request.path,</span><br><span class="line">            exc_info=exc_info,</span><br><span class="line">            extra=&#123;</span><br><span class="line">                <span class="string">'status_code'</span>: <span class="number">500</span>,</span><br><span class="line">                <span class="string">'request'</span>: request</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">        <span class="comment"># 不再返回500的异常HTML报文</span></span><br><span class="line">        <span class="comment"># if settings.DE<span class="doctag">BUG:</span></span></span><br><span class="line">        <span class="comment">#     return debug.technical_500_response(request, *exc_info)</span></span><br><span class="line">        <span class="comment"># If Http500 handler is not installed, re-raise last exception</span></span><br><span class="line">        <span class="keyword">if</span> resolver.urlconf_module <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            six.reraise(*exc_info)</span><br><span class="line">        <span class="comment"># Return an HttpResponse that displays a friendly error message.</span></span><br><span class="line">        callback, param_dict = resolver.resolve_error_handler(<span class="number">500</span>)</span><br><span class="line">        <span class="keyword">return</span> callback(request, **param_dict)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_wsgi_application</span><span class="params">()</span>:</span></span><br><span class="line">    django.setup()</span><br><span class="line">    <span class="keyword">return</span> CustomWSGIHandler()</span><br></pre></td></tr></table></figure>
+<h3 id="定制500错误处理函数"><a href="#定制500错误处理函数" class="headerlink" title="定制500错误处理函数"></a>定制500错误处理函数</h3><p><code>project/error_handlers.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@requires_csrf_token</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">server_error</span><span class="params">(request, template_name=<span class="string">'500.html'</span>)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    定制500异常函数</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    _logger.error(<span class="string">'server_error.'</span>)</span><br><span class="line">    <span class="keyword">return</span> http.HttpResponseServerError(<span class="string">'Server Error'</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="注册500错误处理函数"><a href="#注册500错误处理函数" class="headerlink" title="注册500错误处理函数"></a>注册500错误处理函数</h3><p><code>protject/urls.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">handler500 = <span class="string">'error_handlers.server_error'</span></span><br></pre></td></tr></table></figure>
+<h3 id="注册ROOT-URLCONF"><a href="#注册ROOT-URLCONF" class="headerlink" title="注册ROOT_URLCONF"></a>注册<code>ROOT_URLCONF</code></h3><p><code>project/settings.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ROOT_URLCONF = <span class="string">'project.urls'</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://docs.djangoproject.com/en/1.11/topics/http/views/" target="_blank" rel="noopener">Django Writing views</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Django/">Django</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/05/11/jekins-gitlab/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Jenkins+Gitlab持续集成
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/12/04/macos-install-pil/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">MacOS安装PIL</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Django异常内容调用栈帧"><span class="nav-number">1.</span> <span class="nav-text">Django异常内容调用栈帧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#WSGI处理函数"><span class="nav-number">1.1.</span> <span class="nav-text">WSGI处理函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URL路由解析"><span class="nav-number">1.2.</span> <span class="nav-text">URL路由解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册Django默认错误处理函数"><span class="nav-number">1.3.</span> <span class="nav-text">注册Django默认错误处理函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义Django默认错误处理函数"><span class="nav-number">1.4.</span> <span class="nav-text">定义Django默认错误处理函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定制Django500异常处理"><span class="nav-number">2.</span> <span class="nav-text">定制Django500异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定制WSGIHandler"><span class="nav-number">2.1.</span> <span class="nav-text">定制WSGIHandler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定制500错误处理函数"><span class="nav-number">2.2.</span> <span class="nav-text">定制500错误处理函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册500错误处理函数"><span class="nav-number">2.3.</span> <span class="nav-text">注册500错误处理函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册ROOT-URLCONF"><span class="nav-number">2.4.</span> <span class="nav-text">注册ROOT_URLCONF</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2020 Mengyy&#39;s Blog All Rights Reserved.
+        
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+      var headerblur = document.getElementById("header-blur");
+      headerblur.style.minHeight = window.getComputedStyle(document.getElementById("allheader"), null).height;
+    
+    
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

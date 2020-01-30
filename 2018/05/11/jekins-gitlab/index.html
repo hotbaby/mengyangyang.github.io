@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Jenkins+Gitlab持续集成 | Mengyy&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="JekinsGitlab">
+  
+  
+  
+  
+  <meta name="description" content="Install Jenkins">
+<meta name="keywords" content="Jekins,Gitlab">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jenkins+Gitlab持续集成">
+<meta property="og:url" content="http://mengyangyang.org/2018/05/11/jekins-gitlab/index.html">
+<meta property="og:site_name" content="Mengyy&#39;s Blog">
+<meta property="og:description" content="Install Jenkins">
+<meta property="og:locale" content="en_US.UTF-8">
+<meta property="og:image" content="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins.png">
+<meta property="og:updated_time" content="2020-01-30T11:36:23.882Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jenkins+Gitlab持续集成">
+<meta name="twitter:description" content="Install Jenkins">
+<meta name="twitter:image" content="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Mengyy&#39;s Blog" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="/js/jquery-3.1.1.min.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/fashion.css">
+  <link rel="stylesheet" href="/css/glyphs.css">
+
+</head>
+</html>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  
+  <div class="site-header-image">
+    <img id="originBg" width="100%" alt="Hike News" src="">
+  </div>
+
+  <div id="header-blur" class="site-header-image blur" style="position: absolute; top:0; height: 207px; min-height: 207px; min-width: 100%;">
+    <img id="blurBg" width="100%" style="top: 96%" alt="Hike News" src="">
+  </div>
+
+  <script>
+        var imgUrls = "css/images/pose01.jpg,https://source.unsplash.com/collection/954550/1920x1080,https://source.unsplash.com/collection/954550/1920x1081".split(",");
+        var random = Math.floor((Math.random() * imgUrls.length ));
+        if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+          document.getElementById("originBg").src=imgUrls[random];
+          document.getElementById("blurBg").src=imgUrls[random];
+        } else {
+          document.getElementById("originBg").src='/' + imgUrls[random];
+          document.getElementById("blurBg").src='/' + imgUrls[random];
+        }
+    </script>
+
+
+
+
+<header id="allheader" class="site-header" role="banner" 
+   style="width: 100%; position: absolute; top:0; background: rgba(255,255,255,.8);"  >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" title="Mengyy&#39;s Blog" rel="home"> Mengyy&#39;s Blog </a>
+            
+          </h1>
+          
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-jekins-gitlab" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+<div class="article-gallery">
+  <div class="article-gallery-photos">
+    
+      <a class="article-gallery-img fancybox" href="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins.png" rel="gallery_ck60oq2d5000hm47aokx4dxs5">
+        <img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins.png" itemprop="image">
+      </a>
+    
+  </div>
+</div>
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Jenkins+Gitlab持续集成
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2018/05/11/jekins-gitlab/" class="article-date">
+	  <time datetime="2018-05-11T08:42:28.000Z" itemprop="datePublished">May 11, 2018</time>
+	</a>
+
+       
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Install-Jenkins"><a href="#Install-Jenkins" class="headerlink" title="Install Jenkins"></a>Install Jenkins</h2><a id="more"></a>
+<h3 id="Java-Environment"><a href="#Java-Environment" class="headerlink" title="Java Environment"></a>Java Environment</h3><p>下载jdk</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz?AuthParam=1526090409_eeb74c2f68fe8539ce3cb2608695d850;</span><br><span class="line"></span><br><span class="line">tar xvf jdk-8u171-linux-x64.tar.gz -C /opt/;</span><br><span class="line">mv /opt/jdk1.8.0_171/ /opt/jdk/;</span><br></pre></td></tr></table></figure>
+<p>配置环境变量</p>
+<p>编辑/etc/profile</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JAVA_HOME=/opt/jdk</span><br><span class="line">CLASSPATH=<span class="variable">$JAVA_HOME</span>/lib/</span><br><span class="line">PATH=<span class="variable">$PATH</span>:<span class="variable">$JAVA_HOME</span>/bin</span><br><span class="line"><span class="built_in">export</span> PATH JAVA_HOME CLASSPATH</span><br></pre></td></tr></table></figure>
+<p>运行环境</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+<p>验证环境</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kdreader@kdreader-staging:~$ java -version</span><br><span class="line">java version <span class="string">"1.8.0_171"</span></span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_171-b11)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.171-b11, mixed mode)</span><br></pre></td></tr></table></figure>
+<h3 id="Install-jenkins"><a href="#Install-jenkins" class="headerlink" title="Install jenkins"></a>Install jenkins</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://prodjenkinsreleases.blob.core.windows.net/debian/jenkins_2.121_all.deb; sudo  dpkg -i jenkins_2.121_all.deb;</span><br></pre></td></tr></table></figure>
+<p>更新<code>/etc/init.d/jenkins</code>PATH变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=/bin:/usr/bin:/sbin:/usr/sbin:/opt/jdk/bin/</span><br></pre></td></tr></table></figure>
+<p>启动 Jenkins</p>
+<p><code>sudo /etc/init.d/jenkins start</code></p>
+<p>配置nginx</p>
+<p>添加<code>/etc/nginx/sites-enabled/jenkins.conf</code></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  ci.kdreader.com;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="attribute">server_name_in_redirect</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$remote_addr</span>;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> User-Agent <span class="variable">$http_user_agent</span>;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> Referer <span class="variable">$http_referer</span>;</span><br><span class="line">    <span class="attribute">proxy_connect_timeout</span>      <span class="number">300</span>;</span><br><span class="line">    <span class="attribute">proxy_send_timeout</span>         <span class="number">300</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">uwsgi_read_timeout</span> <span class="number">360</span>;</span><br><span class="line">    <span class="attribute">uwsgi_send_timeout</span> <span class="number">360</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://127.0.0.1:8080;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重启nginx</p>
+<p><code>sudo nginx -s reload</code></p>
+<h2 id="Config-Jenkins"><a href="#Config-Jenkins" class="headerlink" title="Config Jenkins"></a>Config Jenkins</h2><p><code>http://ci.kdreader.com</code>访问Jenkins</p>
+<p>初始化秘钥路径：<code>/var/lib/jenkins/secrets/initialAdminPassword</code></p>
+<h3 id="Install-and-Config-Gitlab-plugin"><a href="#Install-and-Config-Gitlab-plugin" class="headerlink" title="Install and Config Gitlab plugin"></a>Install and Config Gitlab plugin</h3><p>配置Credential</p>
+<p>Gitlab生成token</p>
+<p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/gitlab-generate-token.png" alt="gitlab-generate-token"></p>
+<p>配置Credentials</p>
+<p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-config-credential.png" alt="jenkins-config-credential"></p>
+<p>配置Gitlab</p>
+<p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-config-gitlab.png" alt="jenkins-config-gitlab"></p>
+<h3 id="Install-and-Config-SSH-Remote-Hosts"><a href="#Install-and-Config-SSH-Remote-Hosts" class="headerlink" title="Install and Config SSH Remote Hosts"></a>Install and Config SSH Remote Hosts</h3><p>配置Credentials</p>
+<p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-config-ssh-credential.png" alt="jenkins-config-ssh-credential"></p>
+<p>配置SSH remote hosts</p>
+<p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-config-ssh-remote-hosts.png" alt="jenkins-config-ssh-remote-hosts"></p>
+<h3 id="Config-Email-Notification"><a href="#Config-Email-Notification" class="headerlink" title="Config Email Notification"></a>Config Email Notification</h3><p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-config-email-notification.png" alt="jenkins-config-email-notification"></p>
+<h2 id="Create-Project"><a href="#Create-Project" class="headerlink" title="Create Project"></a>Create Project</h2><p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-create-project.png" alt="jenkins-create-project"></p>
+<h3 id="Buil-Trigger"><a href="#Buil-Trigger" class="headerlink" title="Buil Trigger"></a>Buil Trigger</h3><p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-project-trigger.png" alt="jenkins-project-trigger"></p>
+<p>配置Gitlab webhook</p>
+<p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/gitlab-webhook.png" alt="gitlab-webhook"></p>
+<p>配置安全策略</p>
+<p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-security-config.png" alt="jenkins-security-config"></p>
+<h3 id="Build"><a href="#Build" class="headerlink" title="Build"></a>Build</h3><p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/Jenkins-project-build.png" alt="Jenkins-project-build"></p>
+<h3 id="After-Build"><a href="#After-Build" class="headerlink" title="After Build"></a>After Build</h3><p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-project-after-build.png" alt="jenkins-project-after-build"></p>
+<h2 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h2><p>Question: Gitlab Webhook 403</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html;charset=utf-8"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Error 403 anonymous is missing the Job/Build permission<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span><span class="tag">&lt;<span class="name">h2</span>&gt;</span>HTTP ERROR 403<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>Problem accessing /project/kdreader. Reason:</span><br><span class="line"><span class="tag">&lt;<span class="name">pre</span>&gt;</span>    anonymous is missing the Job/Build permission<span class="tag">&lt;/<span class="name">pre</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://eclipse.org/jetty"</span>&gt;</span>Powered by Jetty:// 9.4.z-SNAPSHOT<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;<span class="name">hr</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Solution:</p>
+<p>配置Jenkins 匿名用户安全策略</p>
+<p><img src="https://share-static.oss-cn-hangzhou.aliyuncs.com/mengyangyang.org/pictures/jenkins-security-config.png" alt="jenkins-security-config"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz?AuthParam=1526090409_eeb74c2f68fe8539ce3cb2608695d850" target="_blank" rel="noopener">java jdk8</a></li>
+<li><a href="https://pkg.jenkins.io/debian/" target="_blank" rel="noopener">jenkins debian package</a></li>
+<li><a href="https://blog.csdn.net/ruangong1203/article/details/73065410" target="_blank" rel="noopener">配置Jenkins+Gitlab</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gitlab/">Gitlab</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jekins/">Jekins</a></li></ul>
+
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/07/03/robot-law/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          机器人三定律
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/12/06/django-exception/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Django异常处理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Install-Jenkins"><span class="nav-number">1.</span> <span class="nav-text">Install Jenkins</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Environment"><span class="nav-number">1.1.</span> <span class="nav-text">Java Environment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Install-jenkins"><span class="nav-number">1.2.</span> <span class="nav-text">Install jenkins</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Config-Jenkins"><span class="nav-number">2.</span> <span class="nav-text">Config Jenkins</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Install-and-Config-Gitlab-plugin"><span class="nav-number">2.1.</span> <span class="nav-text">Install and Config Gitlab plugin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Install-and-Config-SSH-Remote-Hosts"><span class="nav-number">2.2.</span> <span class="nav-text">Install and Config SSH Remote Hosts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Config-Email-Notification"><span class="nav-number">2.3.</span> <span class="nav-text">Config Email Notification</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Create-Project"><span class="nav-number">3.</span> <span class="nav-text">Create Project</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Buil-Trigger"><span class="nav-number">3.1.</span> <span class="nav-text">Buil Trigger</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Build"><span class="nav-number">3.2.</span> <span class="nav-text">Build</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#After-Build"><span class="nav-number">3.3.</span> <span class="nav-text">After Build</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q-amp-A"><span class="nav-number">4.</span> <span class="nav-text">Q&amp;A</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2020 Mengyy&#39;s Blog All Rights Reserved.
+        
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+      var headerblur = document.getElementById("header-blur");
+      headerblur.style.minHeight = window.getComputedStyle(document.getElementById("allheader"), null).height;
+    
+    
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

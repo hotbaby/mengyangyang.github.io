@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Python装饰器 | Mengyy&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="PythonDecorator">
+  
+  
+  
+  
+  <meta name="description" content="装饰器是一种设计模型（结构型模式），可以动态给一个对象添加一些额外的职责，而不用修改该对象的任何code。 比如，我们要给一个API增加权限认证，可以通过auth_decorator()装饰这个API，而不必修改每个API的代码；debug一个函数的耗时，可以实现一个time_decorator()装饰要这些函数，而不用修改这些函数的内部实现；给个TextView()增加滚动条的装饰器Scroll">
+<meta name="keywords" content="Python,Decorator">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python装饰器">
+<meta property="og:url" content="http://mengyangyang.org/2017/03/28/python-decorator/index.html">
+<meta property="og:site_name" content="Mengyy&#39;s Blog">
+<meta property="og:description" content="装饰器是一种设计模型（结构型模式），可以动态给一个对象添加一些额外的职责，而不用修改该对象的任何code。 比如，我们要给一个API增加权限认证，可以通过auth_decorator()装饰这个API，而不必修改每个API的代码；debug一个函数的耗时，可以实现一个time_decorator()装饰要这些函数，而不用修改这些函数的内部实现；给个TextView()增加滚动条的装饰器Scroll">
+<meta property="og:locale" content="en_US.UTF-8">
+<meta property="og:updated_time" content="2020-01-30T11:36:23.884Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python装饰器">
+<meta name="twitter:description" content="装饰器是一种设计模型（结构型模式），可以动态给一个对象添加一些额外的职责，而不用修改该对象的任何code。 比如，我们要给一个API增加权限认证，可以通过auth_decorator()装饰这个API，而不必修改每个API的代码；debug一个函数的耗时，可以实现一个time_decorator()装饰要这些函数，而不用修改这些函数的内部实现；给个TextView()增加滚动条的装饰器Scroll">
+  
+    <link rel="alternate" href="/atom.xml" title="Mengyy&#39;s Blog" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="/js/jquery-3.1.1.min.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/fashion.css">
+  <link rel="stylesheet" href="/css/glyphs.css">
+
+</head>
+</html>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  
+  <div class="site-header-image">
+    <img id="originBg" width="100%" alt="Hike News" src="">
+  </div>
+
+  <div id="header-blur" class="site-header-image blur" style="position: absolute; top:0; height: 207px; min-height: 207px; min-width: 100%;">
+    <img id="blurBg" width="100%" style="top: 96%" alt="Hike News" src="">
+  </div>
+
+  <script>
+        var imgUrls = "css/images/pose01.jpg,https://source.unsplash.com/collection/954550/1920x1080,https://source.unsplash.com/collection/954550/1920x1081".split(",");
+        var random = Math.floor((Math.random() * imgUrls.length ));
+        if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+          document.getElementById("originBg").src=imgUrls[random];
+          document.getElementById("blurBg").src=imgUrls[random];
+        } else {
+          document.getElementById("originBg").src='/' + imgUrls[random];
+          document.getElementById("blurBg").src='/' + imgUrls[random];
+        }
+    </script>
+
+
+
+
+<header id="allheader" class="site-header" role="banner" 
+   style="width: 100%; position: absolute; top:0; background: rgba(255,255,255,.8);"  >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" title="Mengyy&#39;s Blog" rel="home"> Mengyy&#39;s Blog </a>
+            
+          </h1>
+          
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-python-decorator" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Python装饰器
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2017/03/28/python-decorator/" class="article-date">
+	  <time datetime="2017-03-28T11:29:29.000Z" itemprop="datePublished">March 28, 2017</time>
+	</a>
+
+       
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>装饰器是一种设计模型（结构型模式），可以动态给一个对象添加一些额外的职责，而不用修改该对象的任何code。</p>
+<p>比如，我们要给一个API增加权限认证，可以通过<code>auth_decorator()</code>装饰这个API，而不必修改每个API的代码；debug一个函数的耗时，可以实现一个<code>time_decorator()</code>装饰要这些函数，而不用修改这些函数的内部实现；给个<code>TextView()</code>增加滚动条的装饰器<code>ScrollDecorator()</code>；Flask使用<code>route()</code>装饰器进行路由的注册等等。</p>
+<p>装饰器优点：</p>
+<ul>
+<li>比静态继承更灵活。与静态继承相比，装饰器可以灵活向对象添加额外的责任</li>
+<li>避免在层次结构高层的类有特多的特征。 可以定义一个简单的类，通过装饰器给他逐渐添加功能。</li>
+</ul>
+<h2 id="基本装饰器"><a href="#基本装饰器" class="headerlink" title="基本装饰器"></a>基本装饰器</h2><p>Python从语法本身就支持装饰器，Python装饰器是一个可调用对象（比如，函数、类），接受一个函数对象作为输入，返回另外一个函数对象。</p>
+<p>最简单的Python函数装饰器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">decorator</span><span class="params">(f)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">		print(<span class="string">'before call %s'</span> % f.__name__)</span><br><span class="line">		result = f(*args, **kwargs)</span><br><span class="line">		print(<span class="string">'after call %s'</span> % f.__name__)</span><br><span class="line">		<span class="keyword">return</span> result</span><br><span class="line">	<span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>@decorator</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">	print(<span class="string">'call func'</span>)</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func()</span><br><span class="line">before call func</span><br><span class="line">call func</span><br><span class="line">after call func</span><br></pre></td></tr></table></figure>
+<h3 id="函数装饰器"><a href="#函数装饰器" class="headerlink" title="函数装饰器"></a>函数装饰器</h3><p>函数装饰器，接受一个函数f作为输入，返回另外一个函数对象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">function decorator</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">time_cost_decorator</span><span class="params">(f)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        start_time = time.time()</span><br><span class="line">        rv = f(*args, **kwargs)</span><br><span class="line">        end_time = time.time()</span><br><span class="line">        delta = end_time - start_time</span><br><span class="line">        print(<span class="string">'time cost: %ds'</span> %  delta)</span><br><span class="line">        <span class="keyword">return</span> rv</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">@time_cost_decorator</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sleep_10s_func</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">    time.sleep(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sleep_10s_func()</span><br><span class="line">time cost: <span class="number">10</span>s</span><br></pre></td></tr></table></figure>
+<p>使用类实现函数装饰器，在对象初始化时接受一个函数f作为输入，在模拟调用<code>__call__</code>特殊方法中调用f函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># class decorator</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TimeCostDecorator</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, f)</span>:</span></span><br><span class="line">        self._f = f</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">        start_time = time.time()</span><br><span class="line">        ret = self._f(*args, **kwargs)</span><br><span class="line">        end_time = time.time()</span><br><span class="line">        delta = end_time - start_time</span><br><span class="line">        print(<span class="string">'time cost %ds'</span> % delta)</span><br><span class="line">        <span class="keyword">return</span> ret</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@TimeCostDecorator</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sleep_5s_func</span><span class="params">()</span>:</span></span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="类装饰器"><a href="#类装饰器" class="headerlink" title="类装饰器"></a>类装饰器</h3><p>类装饰器的与函数装饰器语法非常类似。类装饰器接受cls作为输入，返回另外一个cls。</p>
+<p>类装饰器可以用来管理管理类，类实例的创建。</p>
+<p>函数实现类装饰器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">class_decorator</span><span class="params">(cls)</span>:</span></span><br><span class="line">	<span class="class"><span class="keyword">class</span> <span class="title">ClassWrapper</span><span class="params">(object)</span>:</span></span><br><span class="line">		<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">			self._ins = cls(*args, **kwargs)</span><br><span class="line">		<span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span><span class="params">(self, name)</span>:</span></span><br><span class="line">			print(<span class="string">'call ClassWapper.__getattr__ func'</span>)</span><br><span class="line">			<span class="keyword">return</span> getattr(self._ins, name)</span><br><span class="line">	<span class="keyword">return</span> ClassWrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>@class_decorator</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span><span class="params">(object)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span><span class="params">(self)</span>:</span></span><br><span class="line">		print(<span class="string">'call Foo.func'</span>)</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Foo().func()</span><br><span class="line">call ClassWapper.__getattr__ func</span><br><span class="line">call Foo.func</span><br></pre></td></tr></table></figure>
+<p>类实现类装饰器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassDecorator</span><span class="params">(object)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, cls)</span>:</span></span><br><span class="line">		self._cls = cls</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">		self._ins = self._cls(*args, **kwargs)</span><br><span class="line">		<span class="keyword">return</span> self</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span><span class="params">(self, name)</span>:</span></span><br><span class="line">		print(<span class="string">'call ClassDecorator.__getattr__'</span>)</span><br><span class="line">		<span class="keyword">return</span> getattr(self._ins, name)</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>@ClassDecorator</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span><span class="params">(object)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span><span class="params">(self)</span>:</span></span><br><span class="line">		print(<span class="string">'call Foo.func func'</span>)</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Foo().func()</span><br><span class="line">call ClassDecorator.__getattr__</span><br><span class="line">call Foo.func func</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="装饰器进阶"><a href="#装饰器进阶" class="headerlink" title="装饰器进阶"></a>装饰器进阶</h2><h3 id="带参数装饰器"><a href="#带参数装饰器" class="headerlink" title="带参数装饰器"></a>带参数装饰器</h3><p>不仅被装饰的函数可以携带参数，装饰器函数也可以携带参数。</p>
+<p>Decorator params imply three levels of callables: a callable to accept decorator arguments, which return a callable to serve a callable to serve as decorator, which return a callbale to handle calls to the origin function or class. Each of the three levels may be a function or class and may retain state in the form of scopes or class attributes.</p>
+<p>函数实现的带参数的函数装饰器：</p>
+<p>以最近写的权限验证为例，描述带参数的装饰器实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; def perm_required(perm, **options):</span><br><span class="line">	def decorator(f):</span><br><span class="line">		def wrapper(*args, **kwargs):</span><br><span class="line">			return f(*args, **kwargs)</span><br><span class="line">		return wrapper</span><br><span class="line">	return decoraor</span><br></pre></td></tr></table></figure>
+<p>类实现的带参数的装饰器：</p>
+<p>TODO</p>
+<p>函数实现的带参数类装饰器：</p>
+<p>TODO</p>
+<p>类实现的带参数类装饰器：</p>
+<p>TODO</p>
+<h3 id="函数签名"><a href="#函数签名" class="headerlink" title="函数签名"></a>函数签名</h3><p><code>functools.wraps()</code> 保留被封装函数的签名，如<code>__module__</code>, <code>__name__</code>, <code>__doc__</code>等</p>
+<p>以下函数装饰器，被装饰的函数的签名被覆盖</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">decorator</span><span class="params">(f)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">		<span class="keyword">return</span> f(*args, **kwargs)</span><br><span class="line">	<span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>@decorator</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span><span class="params">()</span>:</span> <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func.__name__</span><br><span class="line"><span class="string">'wrapper'</span></span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+<p>调用<code>functools.wraps()</code>之后</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">decorator</span><span class="params">(f)</span>:</span></span><br><span class="line"><span class="meta">	@functools.wraps(f)</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">		<span class="keyword">return</span> f(*args, **kwargs)</span><br><span class="line">	<span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>@decorator</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span><span class="params">()</span>:</span> <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func.__name__</span><br><span class="line"><span class="string">'func'</span></span><br></pre></td></tr></table></figure>
+<p><code>wraps()</code>函数的定义</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WRAPPER_ASSIGNMENTS = (<span class="string">'__module__'</span>, <span class="string">'__name__'</span>, <span class="string">'__doc__'</span>)</span><br><span class="line">WRAPPER_UPDATES = (<span class="string">'__dict__'</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">wraps</span><span class="params">(wrapped, assign=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES)</span>:</span><span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<h3 id="嵌套装饰器"><a href="#嵌套装饰器" class="headerlink" title="嵌套装饰器"></a>嵌套装饰器</h3><p>有时一个装饰器不能满足需求，这时，我们可以添加多个装饰器(decorator nesting)。</p>
+<p>以下两个装饰器函数分别实现如下功能，<code>scroll_decorator()</code>添加滚动条，<code>border_decorator()</code>添加边框</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">border_decorator</span><span class="params">(f)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">		print(<span class="string">'border wrapper'</span>)</span><br><span class="line">		<span class="keyword">return</span> f(*args, **kwargs)</span><br><span class="line">	<span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">scroll_decorator</span><span class="params">(f)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">		print(<span class="string">'scroll decorator'</span>)</span><br><span class="line">		<span class="keyword">return</span> f(*args, **kwargs)</span><br><span class="line">	<span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>@border_decorator</span><br><span class="line"><span class="meta">@scroll_decorator</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decorated_func</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">	print(<span class="string">'call decorated func'</span>)</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>decorated_func()</span><br><span class="line">border wrapper</span><br><span class="line">scroll decorator</span><br><span class="line">call decorated func</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+<p>以上装饰器从语法与以下等价</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">decorated_func</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">	print(<span class="string">'decorated func'</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = border_decorator(scroll_decorator(decorated_func))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f()</span><br><span class="line">border wrapper</span><br><span class="line">scroll decorator</span><br><span class="line">decorated func</span><br></pre></td></tr></table></figure>
+<h2 id="装饰器的其他特性"><a href="#装饰器的其他特性" class="headerlink" title="装饰器的其他特性"></a>装饰器的其他特性</h2><h3 id="装饰器与闭包"><a href="#装饰器与闭包" class="headerlink" title="装饰器与闭包"></a>装饰器与闭包</h3><p>TODO</p>
+<h3 id="装饰器与描述符"><a href="#装饰器与描述符" class="headerlink" title="装饰器与描述符"></a>装饰器与描述符</h3><p>TODO</p>
+<h2 id="装饰器使用场景"><a href="#装饰器使用场景" class="headerlink" title="装饰器使用场景"></a>装饰器使用场景</h2><h3 id="统计API的调用时间"><a href="#统计API的调用时间" class="headerlink" title="统计API的调用时间"></a>统计API的调用时间</h3><p>TODO</p>
+<h3 id="单例设计模式"><a href="#单例设计模式" class="headerlink" title="单例设计模式"></a>单例设计模式</h3><p>TODO</p>
+<h3 id="跟踪方法调用"><a href="#跟踪方法调用" class="headerlink" title="跟踪方法调用"></a>跟踪方法调用</h3><p>TODO</p>
+<h3 id="其他用例"><a href="#其他用例" class="headerlink" title="其他用例"></a>其他用例</h3><ul>
+<li>Flask 路由管理</li>
+<li>Django model 事务管理</li>
+<li>Tornado 异步框架</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://docs.python.org/2/library/functools.html#module-functools" target="_blank" rel="noopener">https://docs.python.org/2/library/functools.html#module-functools</a></li>
+<li><a href="http://stackoverflow.com/questions/5929107/python-decorators-with-parameters" target="_blank" rel="noopener">http://stackoverflow.com/questions/5929107/python-decorators-with-parameters</a></li>
+<li><em>Design Patterns - Elements of Resuable Object-Oriented Software</em></li>
+<li><em>Learning Python 5th Edition</em></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Decorator/">Decorator</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/03/29/python-functools/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Python Functools
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/03/21/读书与不读书的区别/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">读书与不读书的区别</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本装饰器"><span class="nav-number">1.</span> <span class="nav-text">基本装饰器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数装饰器"><span class="nav-number">1.1.</span> <span class="nav-text">函数装饰器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类装饰器"><span class="nav-number">1.2.</span> <span class="nav-text">类装饰器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#装饰器进阶"><span class="nav-number">2.</span> <span class="nav-text">装饰器进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#带参数装饰器"><span class="nav-number">2.1.</span> <span class="nav-text">带参数装饰器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数签名"><span class="nav-number">2.2.</span> <span class="nav-text">函数签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#嵌套装饰器"><span class="nav-number">2.3.</span> <span class="nav-text">嵌套装饰器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#装饰器的其他特性"><span class="nav-number">3.</span> <span class="nav-text">装饰器的其他特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#装饰器与闭包"><span class="nav-number">3.1.</span> <span class="nav-text">装饰器与闭包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#装饰器与描述符"><span class="nav-number">3.2.</span> <span class="nav-text">装饰器与描述符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#装饰器使用场景"><span class="nav-number">4.</span> <span class="nav-text">装饰器使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#统计API的调用时间"><span class="nav-number">4.1.</span> <span class="nav-text">统计API的调用时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单例设计模式"><span class="nav-number">4.2.</span> <span class="nav-text">单例设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跟踪方法调用"><span class="nav-number">4.3.</span> <span class="nav-text">跟踪方法调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他用例"><span class="nav-number">4.4.</span> <span class="nav-text">其他用例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2020 Mengyy&#39;s Blog All Rights Reserved.
+        
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+      var headerblur = document.getElementById("header-blur");
+      headerblur.style.minHeight = window.getComputedStyle(document.getElementById("allheader"), null).height;
+    
+    
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

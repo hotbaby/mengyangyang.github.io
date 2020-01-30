@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Hack12306 | Mengyy&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="12306抢票">
+  
+  
+  
+  
+  <meta name="description" content="Hack 12306识别逆天的验证码，刷票，等待，下单，订票失败。。。。。。，如此，陷入死循环 为解决12306订票这些痛点问题，决定自己撸一个抢票助手。">
+<meta name="keywords" content="12306,抢票">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hack12306">
+<meta property="og:url" content="http://mengyangyang.org/2019/01/11/hack12306/index.html">
+<meta property="og:site_name" content="Mengyy&#39;s Blog">
+<meta property="og:description" content="Hack 12306识别逆天的验证码，刷票，等待，下单，订票失败。。。。。。，如此，陷入死循环 为解决12306订票这些痛点问题，决定自己撸一个抢票助手。">
+<meta property="og:locale" content="en_US.UTF-8">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79ly1fz2it0gtwbj30fn0isjs4.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79ly1fz2it026iqj30ej0ic0te.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79ly1fz4rhdx9jnj30me0im74z.jpg">
+<meta property="og:updated_time" content="2020-01-30T11:36:23.882Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hack12306">
+<meta name="twitter:description" content="Hack 12306识别逆天的验证码，刷票，等待，下单，订票失败。。。。。。，如此，陷入死循环 为解决12306订票这些痛点问题，决定自己撸一个抢票助手。">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79ly1fz2it0gtwbj30fn0isjs4.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Mengyy&#39;s Blog" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="/js/jquery-3.1.1.min.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/fashion.css">
+  <link rel="stylesheet" href="/css/glyphs.css">
+
+</head>
+</html>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  
+  <div class="site-header-image">
+    <img id="originBg" width="100%" alt="Hike News" src="">
+  </div>
+
+  <div id="header-blur" class="site-header-image blur" style="position: absolute; top:0; height: 207px; min-height: 207px; min-width: 100%;">
+    <img id="blurBg" width="100%" style="top: 96%" alt="Hike News" src="">
+  </div>
+
+  <script>
+        var imgUrls = "css/images/pose01.jpg,https://source.unsplash.com/collection/954550/1920x1080,https://source.unsplash.com/collection/954550/1920x1081".split(",");
+        var random = Math.floor((Math.random() * imgUrls.length ));
+        if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+          document.getElementById("originBg").src=imgUrls[random];
+          document.getElementById("blurBg").src=imgUrls[random];
+        } else {
+          document.getElementById("originBg").src='/' + imgUrls[random];
+          document.getElementById("blurBg").src='/' + imgUrls[random];
+        }
+    </script>
+
+
+
+
+<header id="allheader" class="site-header" role="banner" 
+   style="width: 100%; position: absolute; top:0; background: rgba(255,255,255,.8);"  >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" title="Mengyy&#39;s Blog" rel="home"> Mengyy&#39;s Blog </a>
+            
+          </h1>
+          
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-hack12306" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Hack12306
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2019/01/11/hack12306/" class="article-date">
+	  <time datetime="2019-01-11T04:13:30.000Z" itemprop="datePublished">January 11, 2019</time>
+	</a>
+
+       
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Hack-12306"><a href="#Hack-12306" class="headerlink" title="Hack 12306"></a>Hack 12306</h1><p>识别逆天的验证码，刷票，等待，下单，订票失败。。。。。。，如此，陷入死循环</p>
+<p>为解决12306订票这些痛点问题，决定自己撸一个抢票助手。</p>
+<a id="more"></a>
+<h2 id="12306订票流程"><a href="#12306订票流程" class="headerlink" title="12306订票流程"></a>12306订票流程</h2><p>抓包分析12306的订票流程，拆分后，主要包含以下4个阶段：</p>
+<h3 id="用户认证流程"><a href="#用户认证流程" class="headerlink" title="用户认证流程"></a>用户认证流程</h3><p>以二维码登录为例：</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz2it0gtwbj30fn0isjs4.jpg" alt></p>
+<h3 id="查询余票流程"><a href="#查询余票流程" class="headerlink" title="查询余票流程"></a>查询余票流程</h3><p>余票查询比较简单，主要返回结果的分析。</p>
+<h3 id="提交订单流程"><a href="#提交订单流程" class="headerlink" title="提交订单流程"></a>提交订单流程</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz2it026iqj30ej0ic0te.jpg" alt></p>
+<h3 id="支付订单流程"><a href="#支付订单流程" class="headerlink" title="支付订单流程"></a>支付订单流程</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz4rhdx9jnj30me0im74z.jpg" alt></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>路线图：</p>
+<ol>
+<li><p>根据12306抓包分析结果，构建12306的 Python SDK，<a href="https://github.com/hack12306/hack12306" target="_blank" rel="noopener">hack12306 Python SDK 源码实现</a></p>
+</li>
+<li><p>基于hack12306 Python SDK 构建订票助手（命令行版本）,<a href="https://github.com/hack12306/12306-booking" target="_blank" rel="noopener">12306 booking 源码实现</a></p>
+</li>
+<li><p>在hack12306 Python SDK，12306订票助手基础上，构建查询、订票、支付的Web服务</p>
+</li>
+<li><p>基于 Web 服务，实现微信订票小程序，DuerOS余票查询等技能</p>
+</li>
+<li><p>… …</p>
+</li>
+</ol>
+<h3 id="12306-Python-SDK"><a href="#12306-Python-SDK" class="headerlink" title="12306 Python SDK"></a>12306 Python SDK</h3><p>参考<a href="https://github.com/hack12306/hack12306" target="_blank" rel="noopener">GitHub项目 hack12306</a></p>
+<h3 id="12306订票助手"><a href="#12306订票助手" class="headerlink" title="12306订票助手"></a>12306订票助手</h3><p>参考<a href="https://github.com/hack12306/12306-booking" target="_blank" rel="noopener">GitHub项目 12306-booking</a></p>
+<h2 id="抢票"><a href="#抢票" class="headerlink" title="抢票"></a>抢票</h2><p>安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install 12306-booking;</span><br></pre></td></tr></table></figure>
+<p>抢票</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">123060-booking --train-date 2020-01-01 --train-name K571 --seat-types 硬卧 --from-station 北京 --to-station 麻城 --pay-channel 微信 --passengers 任正非,王石</span><br></pre></td></tr></table></figure>
+<p>最后预祝大家抢票成功。</p>
+<h2 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h2><ul>
+<li><p><a href="https://github.com/hack12306/hack12306" target="_blank" rel="noopener">hack12306 Python SDK</a></p>
+</li>
+<li><p><a href="https://github.com/hack12306/12306-booking" target="_blank" rel="noopener">hack12306 订票助手</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/12306/">12306</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/抢票/">抢票</a></li></ul>
+
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/04/16/Nginx重试机制导致流水号重复/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Nginx重试机制导致流水号重复
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/12/25/区块链：定义未来金融和经济新格局/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">区块链：定义未来金融和经济新格局</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hack-12306"><span class="nav-number">1.</span> <span class="nav-text">Hack 12306</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#12306订票流程"><span class="nav-number">1.1.</span> <span class="nav-text">12306订票流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用户认证流程"><span class="nav-number">1.1.1.</span> <span class="nav-text">用户认证流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询余票流程"><span class="nav-number">1.1.2.</span> <span class="nav-text">查询余票流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提交订单流程"><span class="nav-number">1.1.3.</span> <span class="nav-text">提交订单流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#支付订单流程"><span class="nav-number">1.1.4.</span> <span class="nav-text">支付订单流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实现"><span class="nav-number">1.2.</span> <span class="nav-text">代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12306-Python-SDK"><span class="nav-number">1.2.1.</span> <span class="nav-text">12306 Python SDK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12306订票助手"><span class="nav-number">1.2.2.</span> <span class="nav-text">12306订票助手</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抢票"><span class="nav-number">1.3.</span> <span class="nav-text">抢票</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资源"><span class="nav-number">1.4.</span> <span class="nav-text">资源</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2020 Mengyy&#39;s Blog All Rights Reserved.
+        
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+      var headerblur = document.getElementById("header-blur");
+      headerblur.style.minHeight = window.getComputedStyle(document.getElementById("allheader"), null).height;
+    
+    
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

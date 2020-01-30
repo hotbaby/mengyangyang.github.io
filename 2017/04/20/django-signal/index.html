@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Django信号 | Mengyy&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="PythonDjango">
+  
+  
+  
+  
+  <meta name="description" content="信号实现了一个复杂系统中子系统之间的解耦，一个子系统的状态发生改变时，通过信号同步（或通知）其他依赖于该系统的系统更新状态，实现了状态的一致性。 不同于flask，直接使用blinker，django内部实现了信号处理机制。 实现原理 定义信号 1234567891011121314151617181920def __init__(self, providing_args=None, use_ca">
+<meta name="keywords" content="Python,Django">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Django信号">
+<meta property="og:url" content="http://mengyangyang.org/2017/04/20/django-signal/index.html">
+<meta property="og:site_name" content="Mengyy&#39;s Blog">
+<meta property="og:description" content="信号实现了一个复杂系统中子系统之间的解耦，一个子系统的状态发生改变时，通过信号同步（或通知）其他依赖于该系统的系统更新状态，实现了状态的一致性。 不同于flask，直接使用blinker，django内部实现了信号处理机制。 实现原理 定义信号 1234567891011121314151617181920def __init__(self, providing_args=None, use_ca">
+<meta property="og:locale" content="en_US.UTF-8">
+<meta property="og:updated_time" content="2020-01-30T11:36:23.881Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Django信号">
+<meta name="twitter:description" content="信号实现了一个复杂系统中子系统之间的解耦，一个子系统的状态发生改变时，通过信号同步（或通知）其他依赖于该系统的系统更新状态，实现了状态的一致性。 不同于flask，直接使用blinker，django内部实现了信号处理机制。 实现原理 定义信号 1234567891011121314151617181920def __init__(self, providing_args=None, use_ca">
+  
+    <link rel="alternate" href="/atom.xml" title="Mengyy&#39;s Blog" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="/js/jquery-3.1.1.min.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/fashion.css">
+  <link rel="stylesheet" href="/css/glyphs.css">
+
+</head>
+</html>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  
+  <div class="site-header-image">
+    <img id="originBg" width="100%" alt="Hike News" src="">
+  </div>
+
+  <div id="header-blur" class="site-header-image blur" style="position: absolute; top:0; height: 207px; min-height: 207px; min-width: 100%;">
+    <img id="blurBg" width="100%" style="top: 96%" alt="Hike News" src="">
+  </div>
+
+  <script>
+        var imgUrls = "css/images/pose01.jpg,https://source.unsplash.com/collection/954550/1920x1080,https://source.unsplash.com/collection/954550/1920x1081".split(",");
+        var random = Math.floor((Math.random() * imgUrls.length ));
+        if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+          document.getElementById("originBg").src=imgUrls[random];
+          document.getElementById("blurBg").src=imgUrls[random];
+        } else {
+          document.getElementById("originBg").src='/' + imgUrls[random];
+          document.getElementById("blurBg").src='/' + imgUrls[random];
+        }
+    </script>
+
+
+
+
+<header id="allheader" class="site-header" role="banner" 
+   style="width: 100%; position: absolute; top:0; background: rgba(255,255,255,.8);"  >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" title="Mengyy&#39;s Blog" rel="home"> Mengyy&#39;s Blog </a>
+            
+          </h1>
+          
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-django-signal" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Django信号
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2017/04/20/django-signal/" class="article-date">
+	  <time datetime="2017-04-20T14:07:38.000Z" itemprop="datePublished">April 20, 2017</time>
+	</a>
+
+       
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>信号实现了一个复杂系统中子系统之间的解耦，一个子系统的状态发生改变时，通过信号同步（或通知）其他依赖于该系统的系统更新状态，实现了状态的一致性。</p>
+<p>不同于flask，直接使用blinker，django内部实现了信号处理机制。</p>
+<p><strong>实现原理</strong></p>
+<p>定义信号</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, providing_args=None, use_caching=False)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Create a new signal.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    providing_args</span></span><br><span class="line"><span class="string">        A list of the arguments this signal can pass along in a send() call.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    self.receivers = []</span><br><span class="line">    <span class="keyword">if</span> providing_args <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        providing_args = []</span><br><span class="line">    self.providing_args = set(providing_args)</span><br><span class="line">    self.lock = threading.Lock()</span><br><span class="line">    self.use_caching = use_caching</span><br><span class="line">    <span class="comment"># For convenience we create empty caches even if they are not used.</span></span><br><span class="line">    <span class="comment"># A note about caching: if use_caching is defined, then for each</span></span><br><span class="line">    <span class="comment"># distinct sender we cache the receivers that sender has in</span></span><br><span class="line">    <span class="comment"># 'sender_receivers_cache'. The cache is cleaned when .connect() or</span></span><br><span class="line">    <span class="comment"># .disconnect() is called and populated on send().</span></span><br><span class="line">    self.sender_receivers_cache = weakref.WeakKeyDictionary() <span class="keyword">if</span> use_caching <span class="keyword">else</span> &#123;&#125;</span><br><span class="line">    self._dead_receivers = <span class="keyword">False</span></span><br></pre></td></tr></table></figure>
+<p>连接信号</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect</span><span class="params">(self, receiver, sender=None, weak=True, dispatch_uid=None)</span>:</span></span><br><span class="line">   <span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"></span><br><span class="line">    <span class="comment"># If DEBUG is on, check that we got a good receiver</span></span><br><span class="line">    <span class="keyword">if</span> settings.configured <span class="keyword">and</span> settings.DEBUG:</span><br><span class="line">        <span class="keyword">assert</span> callable(receiver), <span class="string">"Signal receivers must be callable."</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Check for **kwargs</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> func_accepts_kwargs(receiver):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">"Signal receivers must accept keyword arguments (**kwargs)."</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> dispatch_uid:</span><br><span class="line">        lookup_key = (dispatch_uid, _make_id(sender))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        lookup_key = (_make_id(receiver), _make_id(sender))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> weak:</span><br><span class="line">        ref = weakref.ref</span><br><span class="line">        receiver_object = receiver</span><br><span class="line">        <span class="comment"># Check for bound methods</span></span><br><span class="line">        <span class="keyword">if</span> hasattr(receiver, <span class="string">'__self__'</span>) <span class="keyword">and</span> hasattr(receiver, <span class="string">'__func__'</span>):</span><br><span class="line">            ref = WeakMethod</span><br><span class="line">            receiver_object = receiver.__self__</span><br><span class="line">        <span class="keyword">if</span> sys.version_info &gt;= (<span class="number">3</span>, <span class="number">4</span>):</span><br><span class="line">            receiver = ref(receiver)</span><br><span class="line">            weakref.finalize(receiver_object, self._remove_receiver)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            receiver = ref(receiver, self._remove_receiver)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> self.lock:</span><br><span class="line">        self._clear_dead_receivers()</span><br><span class="line">        <span class="keyword">for</span> r_key, _ <span class="keyword">in</span> self.receivers:</span><br><span class="line">            <span class="keyword">if</span> r_key == lookup_key:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.receivers.append((lookup_key, receiver))</span><br><span class="line">        self.sender_receivers_cache.clear()</span><br></pre></td></tr></table></figure>
+<p>发送信号</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send</span><span class="params">(self, sender, **named)</span>:</span></span><br><span class="line">    responses = []</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.receivers <span class="keyword">or</span> self.sender_receivers_cache.get(sender) <span class="keyword">is</span> NO_RECEIVERS:</span><br><span class="line">        <span class="keyword">return</span> responses</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> receiver <span class="keyword">in</span> self._live_receivers(sender):</span><br><span class="line">        response = receiver(signal=self, sender=sender, **named)</span><br><span class="line">        responses.append((receiver, response))</span><br><span class="line">    <span class="keyword">return</span> responses</span><br></pre></td></tr></table></figure>
+<p>断开连接</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">disconnect</span><span class="params">(self, receiver=None, sender=None, weak=True, dispatch_uid=None)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> dispatch_uid:</span><br><span class="line">        lookup_key = (dispatch_uid, _make_id(sender))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        lookup_key = (_make_id(receiver), _make_id(sender))</span><br><span class="line"></span><br><span class="line">    disconnected = <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">with</span> self.lock:</span><br><span class="line">        self._clear_dead_receivers()</span><br><span class="line">        <span class="keyword">for</span> index <span class="keyword">in</span> range(len(self.receivers)):</span><br><span class="line">            (r_key, _) = self.receivers[index]</span><br><span class="line">            <span class="keyword">if</span> r_key == lookup_key:</span><br><span class="line">                disconnected = <span class="keyword">True</span></span><br><span class="line">                <span class="keyword">del</span> self.receivers[index]</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        self.sender_receivers_cache.clear()</span><br><span class="line">    <span class="keyword">return</span> disconnected</span><br></pre></td></tr></table></figure>
+<p>信号发生时序图</p>
+<p>TODO</p>
+<p>weakref</p>
+<p>为了防止调用被释放了对象，信号内部保持对receiver调用对象的弱引用，每次发送信号之前，检查该对象是否存在，如果不存在，则标记<code>_dead_receivers</code>为True,等待清楚。</p>
+<p>thread lock</p>
+<p>使用线程锁保证线程安全</p>
+<p><strong>观察者设计模式</strong></p>
+<p>定义对象间一对多的依赖关系，当一个对象的状体发生改变时，所有依赖于它的对象都得到通知并被自动更新。</p>
+<p>将一系统分割成一系列相互协作的类有一个副作用：需要维护对象间的一致性。我们不希望为了维持一致性而使各类聚合，这样就降低了可重用性。</p>
+<p>observer模式描述了如何建立这种关系。这一模式的关键对象是目标（subject）和观察者（observer）.一个目标可以有任意数量的观察者。一旦目标的状态发生改变，所有的观察者都得到通知。作为对这个通知的响应，每个观察者都将查询目标以使其状态与目标的状态同步。</p>
+<p>这种交互也成为发布-订阅（publish-subscribe）.目标是通知的发布者，可以有任意数目的观察者订阅并接收通知。</p>
+<p><code>/django/dispatch/dispatcher.py</code></p>
+<p><strong>References</strong></p>
+<ul>
+<li><a href="https://docs.python.org/2/library/weakref.html" target="_blank" rel="noopener">python2.7 weakref</a></li>
+<li><a href="https://docs.python.org/3.4/library/weakref.html" target="_blank" rel="noopener">python3.4 weakref</a></li>
+<li><em>Design Patterns - Elements of Reusable Object-Oriented Software Observer</em></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Django/">Django</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/04/28/hacker-ethic/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          黑客伦理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/04/19/git/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Git</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav">None</ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2020 Mengyy&#39;s Blog All Rights Reserved.
+        
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+      var headerblur = document.getElementById("header-blur");
+      headerblur.style.minHeight = window.getComputedStyle(document.getElementById("allheader"), null).height;
+    
+    
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

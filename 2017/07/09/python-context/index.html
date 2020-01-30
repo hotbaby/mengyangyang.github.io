@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Python上下文管理器 | Mengyy&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Python">
+  
+  
+  
+  
+  <meta name="description" content="上下管理器是一个对象，定义了执行with语句时需要创建的上下文。context manager的__enter__()和__exit__()方法分别在进入、退出with语句时被调用。 object.__enter__(self) object.__exit__(self, exc_type, exc_value, traceback) with statement12with_stmt ::=">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python上下文管理器">
+<meta property="og:url" content="http://mengyangyang.org/2017/07/09/python-context/index.html">
+<meta property="og:site_name" content="Mengyy&#39;s Blog">
+<meta property="og:description" content="上下管理器是一个对象，定义了执行with语句时需要创建的上下文。context manager的__enter__()和__exit__()方法分别在进入、退出with语句时被调用。 object.__enter__(self) object.__exit__(self, exc_type, exc_value, traceback) with statement12with_stmt ::=">
+<meta property="og:locale" content="en_US.UTF-8">
+<meta property="og:updated_time" content="2020-01-30T11:36:23.884Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python上下文管理器">
+<meta name="twitter:description" content="上下管理器是一个对象，定义了执行with语句时需要创建的上下文。context manager的__enter__()和__exit__()方法分别在进入、退出with语句时被调用。 object.__enter__(self) object.__exit__(self, exc_type, exc_value, traceback) with statement12with_stmt ::=">
+  
+    <link rel="alternate" href="/atom.xml" title="Mengyy&#39;s Blog" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="/js/jquery-3.1.1.min.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/fashion.css">
+  <link rel="stylesheet" href="/css/glyphs.css">
+
+</head>
+</html>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+  
+  <div class="site-header-image">
+    <img id="originBg" width="100%" alt="Hike News" src="">
+  </div>
+
+  <div id="header-blur" class="site-header-image blur" style="position: absolute; top:0; height: 207px; min-height: 207px; min-width: 100%;">
+    <img id="blurBg" width="100%" style="top: 96%" alt="Hike News" src="">
+  </div>
+
+  <script>
+        var imgUrls = "css/images/pose01.jpg,https://source.unsplash.com/collection/954550/1920x1080,https://source.unsplash.com/collection/954550/1920x1081".split(",");
+        var random = Math.floor((Math.random() * imgUrls.length ));
+        if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+          document.getElementById("originBg").src=imgUrls[random];
+          document.getElementById("blurBg").src=imgUrls[random];
+        } else {
+          document.getElementById("originBg").src='/' + imgUrls[random];
+          document.getElementById("blurBg").src='/' + imgUrls[random];
+        }
+    </script>
+
+
+
+
+<header id="allheader" class="site-header" role="banner" 
+   style="width: 100%; position: absolute; top:0; background: rgba(255,255,255,.8);"  >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" title="Mengyy&#39;s Blog" rel="home"> Mengyy&#39;s Blog </a>
+            
+          </h1>
+          
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-python-context" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Python上下文管理器
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2017/07/09/python-context/" class="article-date">
+	  <time datetime="2017-07-09T14:26:25.000Z" itemprop="datePublished">July 9, 2017</time>
+	</a>
+
+       
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>上下管理器是一个对象，定义了执行<code>with</code>语句时需要创建的上下文。context manager的<code>__enter__()</code>和<code>__exit__()</code>方法分别在进入、退出<code>with</code>语句时被调用。</p>
+<p><code>object.__enter__(self)</code></p>
+<p><code>object.__exit__(self, exc_type, exc_value, traceback)</code></p>
+<h2 id="with-statement"><a href="#with-statement" class="headerlink" title="with statement"></a>with statement</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">with_stmt ::=  <span class="string">"with"</span> with_item (<span class="string">","</span> with_item)* <span class="string">":"</span> suite</span><br><span class="line">with_item ::=  expression [<span class="string">"as"</span> target]</span><br></pre></td></tr></table></figure>
+<p><strong>with</strong>语句执行数据流：</p>
+<ol>
+<li>评估上下文表达式是否包含上下文管理器</li>
+<li>加载上下文管理器的<code>__exit__</code>方法</li>
+<li>调用上下文管理的<code>__enter__</code>方法</li>
+<li>如果target包含在with语句中，将<code>__enter__</code>方法的返回值赋给target</li>
+<li>执行suite</li>
+<li>调用<code>__exit__()</code>方法</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mgr = (EXPR)</span><br><span class="line">exit = type(mgr).__exit__  <span class="comment"># Not calling it yet</span></span><br><span class="line">value = type(mgr).__enter__(mgr)</span><br><span class="line">exc = <span class="keyword">True</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    VAR = value  <span class="comment"># Only if "as VAR" is present</span></span><br><span class="line">    BLOCK</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    <span class="comment"># The exceptional case is handled here</span></span><br><span class="line">    exc = <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> exit(mgr, *sys.exc_info()):</span><br><span class="line">    		<span class="keyword">raise</span></span><br><span class="line">    <span class="comment"># The exception is swallowed if exit() returns true</span></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    <span class="comment"># The normal and non-local-goto cases are handled here</span></span><br><span class="line">    <span class="keyword">if</span> exc:</span><br><span class="line">        exit(mgr, <span class="keyword">None</span>, <span class="keyword">None</span>, <span class="keyword">None</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="contextlib"><a href="#contextlib" class="headerlink" title="contextlib"></a>contextlib</h2><p>contextlib提供了快速定义支持上下文管理器的函数对象。</p>
+<p>定义一个生成器函数，contextmanager装饰后就变成一个支持上下文管理器的函数对象。yield之前语句子在代码块之前被执行，yield之后语句在代码执行完之后被执行。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> contextlib <span class="keyword">import</span> contextmanager</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>@contextmanager</span><br><span class="line"><span class="meta">... </span><span class="function"><span class="keyword">def</span> <span class="title">tag</span><span class="params">(name)</span>:</span></span><br><span class="line"><span class="meta">... </span>    print(<span class="string">'&lt;%s&gt;'</span> % name)</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">yield</span></span><br><span class="line"><span class="meta">... </span>    print(<span class="string">'&lt;/%s&gt;'</span> % name)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> tag(<span class="string">'h1'</span>):</span><br><span class="line"><span class="meta">... </span>    print(<span class="string">'hotbaby'</span>)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line">&lt;h1&gt;</span><br><span class="line">hotbaby</span><br><span class="line">&lt;/h1&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="context-decorator"><a href="#context-decorator" class="headerlink" title="context decorator"></a>context decorator</h2><p>contextmanager是一个函数装饰器，装饰只包含一个yield语句的生成器函数，返回一个支持上下文管理器的函数对象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">contextmanager</span><span class="params">(func)</span>:</span></span><br><span class="line"><span class="meta">    @wraps(func)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">helper</span><span class="params">(*args, **kwds)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> GeneratorContextManager(func(*args, **kwds))</span><br><span class="line">    <span class="keyword">return</span> helper</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Note: 被装饰的生成器函数变成生成器作为参数传递到<strong>GeneratorContextManager</strong>对象中。</p>
+</blockquote>
+<p>生成器上下文管理器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GeneratorContextManager</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="string">"""Helper for @contextmanager decorator."""</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, gen)</span>:</span></span><br><span class="line">        self.gen = gen</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">return</span> self.gen.next()</span><br><span class="line">        <span class="keyword">except</span> StopIteration:</span><br><span class="line">            <span class="keyword">raise</span> RuntimeError(<span class="string">"generator didn't yield"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__exit__</span><span class="params">(self, type, value, traceback)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> type <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                self.gen.next()</span><br><span class="line">            <span class="keyword">except</span> StopIteration:</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">raise</span> RuntimeError(<span class="string">"generator didn't stop"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> value <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">                <span class="comment"># Need to force instantiation so we can reliably</span></span><br><span class="line">                <span class="comment"># tell if we get the same exception back</span></span><br><span class="line">                value = type()</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                self.gen.throw(type, value, traceback)</span><br><span class="line">                <span class="keyword">raise</span> RuntimeError(<span class="string">"generator didn't stop after throw()"</span>)</span><br><span class="line">            <span class="keyword">except</span> StopIteration, exc:</span><br><span class="line">                <span class="comment"># Suppress the exception *unless* it's the same exception that</span></span><br><span class="line">                <span class="comment"># was passed to throw().  This prevents a StopIteration</span></span><br><span class="line">                <span class="comment"># raised inside the "with" statement from being suppressed</span></span><br><span class="line">                <span class="keyword">return</span> exc <span class="keyword">is</span> <span class="keyword">not</span> value</span><br><span class="line">            <span class="keyword">except</span>:</span><br><span class="line">                <span class="comment"># only re-raise if it's *not* the exception that was</span></span><br><span class="line">                <span class="comment"># passed to throw(), because __exit__() must not raise</span></span><br><span class="line">                <span class="comment"># an exception unless __exit__() itself failed.  But throw()</span></span><br><span class="line">                <span class="comment"># has to raise the exception to signal propagation, so this</span></span><br><span class="line">                <span class="comment"># fixes the impedance mismatch between the throw() protocol</span></span><br><span class="line">                <span class="comment"># and the __exit__() protocol.</span></span><br><span class="line">                <span class="comment">#</span></span><br><span class="line">                <span class="keyword">if</span> sys.exc_info()[<span class="number">1</span>] <span class="keyword">is</span> <span class="keyword">not</span> value:</span><br><span class="line">                    <span class="keyword">raise</span></span><br></pre></td></tr></table></figure>
+<h2 id="references"><a href="#references" class="headerlink" title="references"></a>references</h2><ul>
+<li><a href="http://hotbaby.org/python/2/reference/datamodel.html#with-statement-context-managers" target="_blank" rel="noopener">http://hotbaby.org/python/2/reference/datamodel.html#with-statement-context-managers</a></li>
+<li><a href="http://hotbaby.org/python/2/reference/compound_stmts.html#the-with-statement" target="_blank" rel="noopener">http://hotbaby.org/python/2/reference/compound_stmts.html#the-with-statement</a></li>
+<li><a href="http://hotbaby.org/python/2/library/contextlib.html" target="_blank" rel="noopener">http://hotbaby.org/python/2/library/contextlib.html</a></li>
+<li><a href="https://hg.python.org/cpython/file/2.7/Lib/contextlib.py" target="_blank" rel="noopener">https://hg.python.org/cpython/file/2.7/Lib/contextlib.py</a></li>
+<li><a href="https://www.python.org/dev/peps/pep-0343/" target="_blank" rel="noopener">https://www.python.org/dev/peps/pep-0343/</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/07/10/python-descriptor/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Python描述符
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/07/01/python-itertools/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Python Itertools</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#with-statement"><span class="nav-number">1.</span> <span class="nav-text">with statement</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#contextlib"><span class="nav-number">2.</span> <span class="nav-text">contextlib</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#context-decorator"><span class="nav-number">3.</span> <span class="nav-text">context decorator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">4.</span> <span class="nav-text">references</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2020 Mengyy&#39;s Blog All Rights Reserved.
+        
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+      var headerblur = document.getElementById("header-blur");
+      headerblur.style.minHeight = window.getComputedStyle(document.getElementById("allheader"), null).height;
+    
+    
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
