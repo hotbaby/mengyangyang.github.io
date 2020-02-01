@@ -19,14 +19,14 @@
 <meta property="og:site_name" content="Mengyy&#39;s Blog">
 <meta property="og:description" content="Hack 12306识别逆天的验证码，刷票，等待，下单，订票失败。。。。。。，如此，陷入死循环 为解决12306订票这些痛点问题，决定自己撸一个抢票助手。">
 <meta property="og:locale" content="en_US.UTF-8">
-<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79ly1fz2it0gtwbj30fn0isjs4.jpg">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79ly1fz2it026iqj30ej0ic0te.jpg">
-<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79ly1fz4rhdx9jnj30me0im74z.jpg">
-<meta property="og:updated_time" content="2020-01-30T11:36:23.882Z">
+<meta property="og:image" content="http://processon.com/chart_image/5c2c2b92e4b0fa03ce872c0b.png">
+<meta property="og:image" content="http://processon.com/chart_image/5c32a837e4b048f108c44b77.png">
+<meta property="og:image" content="http://processon.com/chart_image/5c3a92e7e4b0fa03ce96ed42.png">
+<meta property="og:updated_time" content="2020-02-01T12:31:19.189Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hack12306">
 <meta name="twitter:description" content="Hack 12306识别逆天的验证码，刷票，等待，下单，订票失败。。。。。。，如此，陷入死循环 为解决12306订票这些痛点问题，决定自己撸一个抢票助手。">
-<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNc79ly1fz2it0gtwbj30fn0isjs4.jpg">
+<meta name="twitter:image" content="http://processon.com/chart_image/5c2c2b92e4b0fa03ce872c0b.png">
   
     <link rel="alternate" href="/atom.xml" title="Mengyy&#39;s Blog" type="application/atom+xml">
   
@@ -141,10 +141,10 @@
 <a id="more"></a>
 <h2 id="12306订票流程"><a href="#12306订票流程" class="headerlink" title="12306订票流程"></a>12306订票流程</h2><p>抓包分析12306的订票流程，拆分后，主要包含以下4个阶段：</p>
 <h3 id="用户认证流程"><a href="#用户认证流程" class="headerlink" title="用户认证流程"></a>用户认证流程</h3><p>以二维码登录为例：</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz2it0gtwbj30fn0isjs4.jpg" alt></p>
+<p><img src="http://processon.com/chart_image/5c2c2b92e4b0fa03ce872c0b.png" alt></p>
 <h3 id="查询余票流程"><a href="#查询余票流程" class="headerlink" title="查询余票流程"></a>查询余票流程</h3><p>余票查询比较简单，主要返回结果的分析。</p>
-<h3 id="提交订单流程"><a href="#提交订单流程" class="headerlink" title="提交订单流程"></a>提交订单流程</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz2it026iqj30ej0ic0te.jpg" alt></p>
-<h3 id="支付订单流程"><a href="#支付订单流程" class="headerlink" title="支付订单流程"></a>支付订单流程</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz4rhdx9jnj30me0im74z.jpg" alt></p>
+<h3 id="提交订单流程"><a href="#提交订单流程" class="headerlink" title="提交订单流程"></a>提交订单流程</h3><p><img src="http://processon.com/chart_image/5c32a837e4b048f108c44b77.png" alt></p>
+<h3 id="支付订单流程"><a href="#支付订单流程" class="headerlink" title="支付订单流程"></a>支付订单流程</h3><p><img src="http://processon.com/chart_image/5c3a92e7e4b0fa03ce96ed42.png" alt></p>
 <h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>路线图：</p>
 <ol>
 <li><p>根据12306抓包分析结果，构建12306的 Python SDK，<a href="https://github.com/hack12306/hack12306" target="_blank" rel="noopener">hack12306 Python SDK 源码实现</a></p>
