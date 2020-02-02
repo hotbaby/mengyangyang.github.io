@@ -100,6 +100,62 @@
           <section id="main"><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
 
   
+    <article id="post-python-itertools"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2017/07/01/python-itertools/">Python Itertools</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2017/07/01/python-itertools/" class="article-date">
+	  <time datetime="2017-07-01T13:57:10.000Z" itemprop="datePublished">July 1, 2017</time>
+	</a>
+
+       
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="itertools-imap"><a href="#itertools-imap" class="headerlink" title="itertools.imap()"></a>itertools.imap()</h4><p><code>imap(func, *iterables)</code> 和iter和map混合体。</p>
+<p>工作原理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">myimap</span><span class="params">(func, *iterables)</span>:</span></span><br><span class="line">	iterables = map(iter,iterables)</span><br><span class="line">	<span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">		args = [next(it) <span class="keyword">for</span> it <span class="keyword">in</span> iterables]</span><br><span class="line">		<span class="keyword">yield</span> func(*args)</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[item <span class="keyword">for</span> item <span class="keyword">in</span> myimap(pow, (<span class="number">2</span>,<span class="number">2</span>), (<span class="number">3</span>,<span class="number">3</span>))]</span><br><span class="line">[<span class="number">8</span>, <span class="number">8</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="itertools-chain"><a href="#itertools-chain" class="headerlink" title="itertools.chain()"></a>itertools.chain()</h4><p><code>chain(*iterables)</code> 返回一个迭代器，该迭代器依次返回可迭代对象中没一个元素。</p>
+<p>工作原理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">mychain</span><span class="params">(*iterables)</span>:</span></span><br><span class="line">	<span class="keyword">for</span> iter_ <span class="keyword">in</span> iterables:</span><br><span class="line">		<span class="keyword">for</span> item <span class="keyword">in</span> iter_:</span><br><span class="line">			<span class="keyword">yield</span> item</span><br><span class="line">			</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[item <span class="keyword">for</span> item <span class="keyword">in</span> mychain(<span class="string">'abc'</span>, <span class="string">'def'</span>)]</span><br><span class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>, <span class="string">'e'</span>, <span class="string">'f'</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="https://docs.python.org/2/library/functions.html" target="_blank" rel="noopener">https://docs.python.org/2/library/functions.html</a></li>
+<li><a href="https://docs.python.org/2/library/functools.html" target="_blank" rel="noopener">https://docs.python.org/2/library/functools.html</a></li>
+<li><a href="https://docs.python.org/2/library/itertools.html" target="_blank" rel="noopener">https://docs.python.org/2/library/itertools.html</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+
+  
     <article id="post-debian-tz"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -672,80 +728,6 @@
 
 
   
-    <article id="post-django-signal"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2017/04/20/django-signal/">Django信号</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	<a href="/2017/04/20/django-signal/" class="article-date">
-	  <time datetime="2017-04-20T14:07:38.000Z" itemprop="datePublished">April 20, 2017</time>
-	</a>
-
-       
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>信号实现了一个复杂系统中子系统之间的解耦，一个子系统的状态发生改变时，通过信号同步（或通知）其他依赖于该系统的系统更新状态，实现了状态的一致性。</p>
-<p>不同于flask，直接使用blinker，django内部实现了信号处理机制。</p>
-<p><strong>实现原理</strong></p>
-<p>定义信号</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, providing_args=None, use_caching=False)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Create a new signal.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    providing_args</span></span><br><span class="line"><span class="string">        A list of the arguments this signal can pass along in a send() call.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    self.receivers = []</span><br><span class="line">    <span class="keyword">if</span> providing_args <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        providing_args = []</span><br><span class="line">    self.providing_args = set(providing_args)</span><br><span class="line">    self.lock = threading.Lock()</span><br><span class="line">    self.use_caching = use_caching</span><br><span class="line">    <span class="comment"># For convenience we create empty caches even if they are not used.</span></span><br><span class="line">    <span class="comment"># A note about caching: if use_caching is defined, then for each</span></span><br><span class="line">    <span class="comment"># distinct sender we cache the receivers that sender has in</span></span><br><span class="line">    <span class="comment"># 'sender_receivers_cache'. The cache is cleaned when .connect() or</span></span><br><span class="line">    <span class="comment"># .disconnect() is called and populated on send().</span></span><br><span class="line">    self.sender_receivers_cache = weakref.WeakKeyDictionary() <span class="keyword">if</span> use_caching <span class="keyword">else</span> &#123;&#125;</span><br><span class="line">    self._dead_receivers = <span class="keyword">False</span></span><br></pre></td></tr></table></figure>
-<p>连接信号</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect</span><span class="params">(self, receiver, sender=None, weak=True, dispatch_uid=None)</span>:</span></span><br><span class="line">   <span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"></span><br><span class="line">    <span class="comment"># If DEBUG is on, check that we got a good receiver</span></span><br><span class="line">    <span class="keyword">if</span> settings.configured <span class="keyword">and</span> settings.DEBUG:</span><br><span class="line">        <span class="keyword">assert</span> callable(receiver), <span class="string">"Signal receivers must be callable."</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Check for **kwargs</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> func_accepts_kwargs(receiver):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">"Signal receivers must accept keyword arguments (**kwargs)."</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> dispatch_uid:</span><br><span class="line">        lookup_key = (dispatch_uid, _make_id(sender))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        lookup_key = (_make_id(receiver), _make_id(sender))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> weak:</span><br><span class="line">        ref = weakref.ref</span><br><span class="line">        receiver_object = receiver</span><br><span class="line">        <span class="comment"># Check for bound methods</span></span><br><span class="line">        <span class="keyword">if</span> hasattr(receiver, <span class="string">'__self__'</span>) <span class="keyword">and</span> hasattr(receiver, <span class="string">'__func__'</span>):</span><br><span class="line">            ref = WeakMethod</span><br><span class="line">            receiver_object = receiver.__self__</span><br><span class="line">        <span class="keyword">if</span> sys.version_info &gt;= (<span class="number">3</span>, <span class="number">4</span>):</span><br><span class="line">            receiver = ref(receiver)</span><br><span class="line">            weakref.finalize(receiver_object, self._remove_receiver)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            receiver = ref(receiver, self._remove_receiver)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> self.lock:</span><br><span class="line">        self._clear_dead_receivers()</span><br><span class="line">        <span class="keyword">for</span> r_key, _ <span class="keyword">in</span> self.receivers:</span><br><span class="line">            <span class="keyword">if</span> r_key == lookup_key:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.receivers.append((lookup_key, receiver))</span><br><span class="line">        self.sender_receivers_cache.clear()</span><br></pre></td></tr></table></figure>
-<p>发送信号</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send</span><span class="params">(self, sender, **named)</span>:</span></span><br><span class="line">    responses = []</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.receivers <span class="keyword">or</span> self.sender_receivers_cache.get(sender) <span class="keyword">is</span> NO_RECEIVERS:</span><br><span class="line">        <span class="keyword">return</span> responses</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> receiver <span class="keyword">in</span> self._live_receivers(sender):</span><br><span class="line">        response = receiver(signal=self, sender=sender, **named)</span><br><span class="line">        responses.append((receiver, response))</span><br><span class="line">    <span class="keyword">return</span> responses</span><br></pre></td></tr></table></figure>
-<p>断开连接</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">disconnect</span><span class="params">(self, receiver=None, sender=None, weak=True, dispatch_uid=None)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> dispatch_uid:</span><br><span class="line">        lookup_key = (dispatch_uid, _make_id(sender))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        lookup_key = (_make_id(receiver), _make_id(sender))</span><br><span class="line"></span><br><span class="line">    disconnected = <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">with</span> self.lock:</span><br><span class="line">        self._clear_dead_receivers()</span><br><span class="line">        <span class="keyword">for</span> index <span class="keyword">in</span> range(len(self.receivers)):</span><br><span class="line">            (r_key, _) = self.receivers[index]</span><br><span class="line">            <span class="keyword">if</span> r_key == lookup_key:</span><br><span class="line">                disconnected = <span class="keyword">True</span></span><br><span class="line">                <span class="keyword">del</span> self.receivers[index]</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        self.sender_receivers_cache.clear()</span><br><span class="line">    <span class="keyword">return</span> disconnected</span><br></pre></td></tr></table></figure>
-<p>信号发生时序图</p>
-<p>TODO</p>
-<p>weakref</p>
-<p>为了防止调用被释放了对象，信号内部保持对receiver调用对象的弱引用，每次发送信号之前，检查该对象是否存在，如果不存在，则标记<code>_dead_receivers</code>为True,等待清楚。</p>
-<p>thread lock</p>
-<p>使用线程锁保证线程安全</p>
-<p><strong>观察者设计模式</strong></p>
-<p>定义对象间一对多的依赖关系，当一个对象的状体发生改变时，所有依赖于它的对象都得到通知并被自动更新。</p>
-<p>将一系统分割成一系列相互协作的类有一个副作用：需要维护对象间的一致性。我们不希望为了维持一致性而使各类聚合，这样就降低了可重用性。</p>
-<p>observer模式描述了如何建立这种关系。这一模式的关键对象是目标（subject）和观察者（observer）.一个目标可以有任意数量的观察者。一旦目标的状态发生改变，所有的观察者都得到通知。作为对这个通知的响应，每个观察者都将查询目标以使其状态与目标的状态同步。</p>
-<p>这种交互也成为发布-订阅（publish-subscribe）.目标是通知的发布者，可以有任意数目的观察者订阅并接收通知。</p>
-<p><code>/django/dispatch/dispatcher.py</code></p>
-<p><strong>References</strong></p>
-<ul>
-<li><a href="https://docs.python.org/2/library/weakref.html" target="_blank" rel="noopener">python2.7 weakref</a></li>
-<li><a href="https://docs.python.org/3.4/library/weakref.html" target="_blank" rel="noopener">python3.4 weakref</a></li>
-<li><em>Design Patterns - Elements of Reusable Object-Oriented Software Observer</em></li>
-</ul>
-
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Django/">Django</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
-
-      
-    </footer>
-    <hr class="entry-footer-hr">
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-
-  
 
 
   <nav id="page-nav">
@@ -807,6 +789,18 @@
     </ul>
     <div class="widget">
       <ul>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
+              <h6 style="margin: 0;"><a href="/2020/02/02/从疫情想到的/">从疫情想到的</a></h6>
+              <span>February 2, 2020</span>
+            </div>
+
+          </li>
         
           <li class="clearfix">
 
@@ -883,21 +877,6 @@
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-thumbnail">
-                <a href="/2019/10/05/美国陷阱/" title=""><img width="50" height="50" src="https://imgstatic.ctfile.com/upload/portal/19926596/HYj0oewG/20190530-1559217560551910.jpg" class="attachment-thumb-small size-thumb-small wp-post-image" alt="preview-16" title=""></a>
-              </div>
-              <div class="widget-entry-summary">
-            
-
-              <h6 style="margin: 0;"><a href="/2019/10/05/美国陷阱/">美国陷阱</a></h6>
-              <span>October 5, 2019</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -908,7 +887,7 @@
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a><span class="archive-list-count">9</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a><span class="archive-list-count">9</span></li></ul>
     </div>
   </div>
 
